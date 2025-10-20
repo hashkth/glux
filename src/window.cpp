@@ -1,10 +1,7 @@
-
 #include "window.h"
 #include "input.h"
 
-
-// Keep track of Window instance per GLFWwindow*
-static std::unordered_map<GLFWwindow*, Window*> g_window_map;
+static Window* g_window = nullptr;
 
 Window::Window(int width, int height, const std::string& title,
                int gl_major, int gl_minor,
@@ -15,37 +12,10 @@ Window::Window(int width, int height, const std::string& title,
 {
     init_glfw();
     init_imgui();
-    g_window_map[window_] = this;
 }
 
 Window::~Window() {
     cleanup();
-}
-
-Window::Window(Window&& other) noexcept {
-    *this = std::move(other);
-}
-
-Window& Window::operator=(Window&& other) noexcept {
-    if (this != &other) {
-        cleanup();
-        window_ = other.window_;
-        width_ = other.width_;
-        height_ = other.height_;
-        title_ = std::move(other.title_);
-        gl_major_ = other.gl_major_;
-        gl_minor_ = other.gl_minor_;
-        vsync_ = other.vsync_;
-        y_up_ = other.y_up_;
-        events_fn_ = std::move(other.events_fn_);
-        process_fn_ = std::move(other.process_fn_);
-        render_fn_ = std::move(other.render_fn_);
-        render_ui_fn_ = std::move(other.render_ui_fn_);
-        g_window_map[window_] = this;
-
-        other.window_ = nullptr;
-    }
-    return *this;
 }
 
 void Window::init_glfw() {
@@ -75,6 +45,10 @@ void Window::init_glfw() {
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
+    // Store this as the global window
+    g_window = this;
+
+    // Set GLFW callbacks
     glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback);
     glfwSetKeyCallback(window_, key_callback);
     glfwSetMouseButtonCallback(window_, mouse_button_callback);
@@ -85,7 +59,6 @@ void Window::init_glfw() {
 void Window::init_imgui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     if (!ImGui_ImplGlfw_InitForOpenGL(window_, true))
         throw std::runtime_error("Failed to init ImGui GLFW backend");
@@ -98,14 +71,10 @@ void Window::cleanup() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
-
         glfwDestroyWindow(window_);
-        g_window_map.erase(window_);
+        glfwTerminate();
         window_ = nullptr;
-
-        if (g_window_map.empty()) {
-            glfwTerminate();
-        }
+        g_window = nullptr;
     }
 }
 
@@ -123,22 +92,22 @@ void Window::run() {
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         glfwSwapBuffers(window_);
 
-        // reset input state
-        keyboard.key = -1;
-        keyboard.scancode = -1;
-        keyboard.action = -1;
-        keyboard.mods = 0;
-        mouse.button = -1;
-        mouse.action = -1;
-        mouse.mods = 0;
-        mouse.xoffset = 0.0;
+        // Reset input state
+        keyboard.scancode = -1; 
+        keyboard.action = -1; 
+        keyboard.mods = 0; 
+        mouse.button = -1; 
+        mouse.action = -1; 
+        mouse.mods = 0; 
+        mouse.xoffset = 0.0; 
         mouse.yoffset = 0.0;
 
         glfwPollEvents();
     }
+
+    cleanup();
 }
 
 std::pair<int,int> Window::get_size() const {
@@ -150,36 +119,27 @@ std::pair<int,int> Window::get_size() const {
 void Window::set_size(int width, int height) {
     width_ = width;
     height_ = height;
-    if (window_) {
-        glfwSetWindowSize(window_, width, height);
-    }
+    if (window_) glfwSetWindowSize(window_, width, height);
 }
 
 void Window::set_title(const std::string& title) {
     title_ = title;
-    if (window_) {
-        glfwSetWindowTitle(window_, title_.c_str());
-    }
+    if (window_) glfwSetWindowTitle(window_, title_.c_str());
 }
 
 void Window::set_vsync(bool enabled) {
     vsync_ = enabled;
-    if (window_) {
-        glfwSwapInterval(vsync_ ? 1 : 0);
-    }
+    if (window_) glfwSwapInterval(vsync_ ? 1 : 0);
 }
 
 void Window::set_y_up(bool y_up) {
     y_up_ = y_up;
 }
 
-// --- Static callbacks ---
-void Window::framebuffer_size_callback(GLFWwindow* win, int w, int h) {
-    auto* self = g_window_map[win];
-    if (self) {
-        self->width_ = w;
-        self->height_ = h;
-    }
+void Window::framebuffer_size_callback(GLFWwindow*, int w, int h) {
+    if (!g_window) return;
+    g_window->width_ = w;
+    g_window->height_ = h;
     glViewport(0, 0, w, h);
 }
 
@@ -195,13 +155,12 @@ void Window::scroll_callback(GLFWwindow*, double xoffset, double yoffset) {
     mouse.set_scroll(xoffset, yoffset);
 }
 
-void Window::cursor_position_callback(GLFWwindow* win, double xpos, double ypos) {
-    auto* self = g_window_map[win];
-    if (self && self->y_up_) {
-        cursor.set(xpos, self->height_ - ypos - 1);
-    } else {
+void Window::cursor_position_callback(GLFWwindow*, double xpos, double ypos) {
+    if (!g_window) return;
+    if (g_window->y_up_)
+        cursor.set(xpos, g_window->height_ - ypos - 1);
+    else
         cursor.set(xpos, ypos);
-    }
 }
 
 bool Window::should_close() const {
@@ -225,23 +184,24 @@ std::pair<int,int> Window::get_position() const {
 }
 
 void Window::set_position(int x, int y) {
-    if (window_) {
-        glfwSetWindowPos(window_, x, y);
-    }
+    if (window_) glfwSetWindowPos(window_, x, y);
 }
 
-GLFWwindow* Window::get_glfw_window() const {
-    return window_;
+int get_kstate(int key) {
+    if (!g_window) return 0;
+    return glfwGetKey(g_window->get_glfw_window(), key);
 }
 
-int py_get_key(const Window &w, int key) {
-    return glfwGetKey(w.get_glfw_window(), key);
+int get_mstate(int button)
+{
+    if (!g_window) return GLFW_RELEASE;
+    return glfwGetMouseButton(g_window->get_glfw_window(), button);
 }
 
 void Window::set_fullscreen(bool enabled) {
     if (fullscreen_ == enabled || !window_) return;
-
     fullscreen_ = enabled;
+
     if (fullscreen_) {
         monitor_ = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor_);
@@ -253,34 +213,24 @@ void Window::set_fullscreen(bool enabled) {
 }
 
 void Window::set_cursor_visible(bool visible) {
-    if (window_) {
+    if (window_)
         glfwSetInputMode(window_, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
-    }
 }
 
 void Window::set_cursor_mode(CursorMode mode) {
     if (!window_) return;
+    int mode_value = GLFW_CURSOR_NORMAL;
     switch (mode) {
-        case CursorMode::Normal:
-            glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            break;
-        case CursorMode::Hidden:
-            glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-            break;
-        case CursorMode::Disabled:
-            glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            break;
+        case CursorMode::Normal:   mode_value = GLFW_CURSOR_NORMAL; break;
+        case CursorMode::Hidden:   mode_value = GLFW_CURSOR_HIDDEN; break;
+        case CursorMode::Disabled: mode_value = GLFW_CURSOR_DISABLED; break;
     }
+    glfwSetInputMode(window_, GLFW_CURSOR, mode_value);
 }
 
 void Window::set_icon(int width, int height, const unsigned char* pixels) {
     if (!window_ || !pixels) return;
-
-    GLFWimage img;
-    img.width = width;
-    img.height = height;
-    img.pixels = const_cast<unsigned char*>(pixels);  // GLFW expects non-const
-
+    GLFWimage img{width, height, const_cast<unsigned char*>(pixels)};
     glfwSetWindowIcon(window_, 1, &img);
 }
 
@@ -294,23 +244,21 @@ std::vector<unsigned char> Window::screenshot(bool flip_vertically) const {
     glReadPixels(0, 0, fb_width, fb_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 
     if (flip_vertically) {
-        // Flip the image vertically
         int row_bytes = fb_width * 4;
-        std::vector<unsigned char> tmp_row(row_bytes);
+        std::vector<unsigned char> tmp(row_bytes);
         for (int y = 0; y < fb_height / 2; ++y) {
-            unsigned char* row_top = pixels.data() + y * row_bytes;
-            unsigned char* row_bottom = pixels.data() + (fb_height - 1 - y) * row_bytes;
-            std::memcpy(tmp_row.data(), row_top, row_bytes);
-            std::memcpy(row_top, row_bottom, row_bytes);
-            std::memcpy(row_bottom, tmp_row.data(), row_bytes);
+            unsigned char* top = pixels.data() + y * row_bytes;
+            unsigned char* bottom = pixels.data() + (fb_height - 1 - y) * row_bytes;
+            std::memcpy(tmp.data(), top, row_bytes);
+            std::memcpy(top, bottom, row_bytes);
+            std::memcpy(bottom, tmp.data(), row_bytes);
         }
     }
-
     return pixels;
 }
 
-void bind_window(py::module_ &m) {
-    m.def("get_key", &py_get_key, py::arg("window"), py::arg("key"));
+void bind_window(py::module_ &m) 
+{
     py::class_<Window>(m, "Window")
         .def(py::init<int,int,const std::string&,int,int,bool,bool>(),
              py::arg("width")=800,

@@ -79,6 +79,27 @@ static inline auto do_input_text_single(const std::string& label,
     return std::make_tuple(changed, buffer);
 }
 
+static inline auto do_input_text_with_hint_single(const std::string& label,
+                                        const std::string& hint,
+                                        const std::string& text,
+                                        ImGuiInputTextFlags flags) {
+    std::string buffer = text;
+    buffer.resize(std::max<size_t>(buffer.size() + 32, 64));
+    InputTextUserData user_data{ &buffer };
+    bool changed = ImGui::InputTextWithHint(
+        label.c_str(),
+        hint.c_str(),
+        buffer.data(),
+        buffer.capacity(),
+        flags | ImGuiInputTextFlags_CallbackResize,
+        input_text_resize_callback,
+        &user_data
+    );
+    // shrink to actual length (remove pre-allocated space)
+    buffer.resize(std::strlen(buffer.c_str()));
+    return std::make_tuple(changed, buffer);
+}
+
 static inline auto do_input_text_multiline(const std::string& label,
                                            const std::string& text,
                                            const ImVec2& size,
@@ -105,14 +126,6 @@ static inline auto do_input_text_multiline(const std::string& label,
 
 void bind_imgui_core(py::module_& m) {
     // ----- Core windowing -----
-
-    m.def("begin",
-        [](const std::string& name, ImGuiWindowFlags flags) {
-            return ImGui::Begin(name.c_str(), nullptr, flags);
-        },
-        py::arg("name"),
-        py::arg("flags") = ImGuiWindowFlags_None
-    );
 
     m.def("begin",
         [](const std::string& name, bool p_open, ImGuiWindowFlags flags) {
@@ -169,8 +182,8 @@ void bind_imgui_core(py::module_& m) {
 
     // ----- Layout / Spacing -----
     m.def("same_line", &ImGui::SameLine,
-        py::arg("offset_from_start_x") = 0.0f,
-        py::arg("spacing") = -1.0f
+        py::arg("x_offset") = 0.0f,
+        py::arg("spacing") = 0.0f
     );
 
     m.def("separator", &ImGui::Separator);
@@ -219,6 +232,35 @@ void bind_imgui_core(py::module_& m) {
         py::arg("label"), py::arg("size") = ImVec2(0.0f, 0.0f)
     );
 
+    m.def("color_button",
+        [](const std::string& desc_id, const ImVec4& color, ImGuiColorEditFlags flags, const ImVec2& size) {
+            return ImGui::ColorButton(desc_id.c_str(), color, flags, size);
+        },
+        py::arg("desc_id"), py::arg("color"),
+        py::arg("flags") = ImGuiColorEditFlags_None, py::arg("size") = ImVec2(0.0f, 0.0f)
+    );
+
+    m.def("small_button",
+        [](const std::string& label) {
+            return ImGui::SmallButton(label.c_str());
+        },
+        py::arg("label")
+    );
+
+    m.def("arrow_button",
+        [](const std::string& str_id, ImGuiDir dir) {
+            return ImGui::ArrowButton(str_id.c_str(), dir);
+        },
+        py::arg("str_id"), py::arg("dir")
+    );
+
+    m.def("invisible_button",
+        [](const std::string& str_id, const ImVec2& size, ImGuiButtonFlags flags) {
+            return ImGui::InvisibleButton(str_id.c_str(), size, flags);
+        },
+        py::arg("str_id"), py::arg("size"), py::arg("flags") = ImGuiButtonFlags_None
+    );
+
     m.def("checkbox",
         [](const std::string& label, bool value) {
             return wrap_scalar_input<bool>(label, value,
@@ -242,6 +284,13 @@ void bind_imgui_core(py::module_& m) {
             return do_input_text_single(label, text, flags);
         },
         py::arg("label"), py::arg("text"), py::arg("flags") = ImGuiInputTextFlags_None
+    );
+
+    m.def("input_text_with_hint",
+        [](const std::string& label, std::string& hint, const std::string& text, ImGuiInputTextFlags flags) {
+            return do_input_text_with_hint_single(label, hint, text, flags);
+        },
+        py::arg("label"), py::arg("hint"), py::arg("text"), py::arg("flags") = ImGuiInputTextFlags_None
     );
 
     m.def("input_text_multiline",
@@ -423,14 +472,6 @@ void bind_imgui_core(py::module_& m) {
             return std::make_tuple(changed, out);
         },
         py::arg("label"), py::arg("color"), py::arg("flags") = ImGuiColorEditFlags_None
-    );
-
-    m.def("color_button",
-        [](const std::string& desc_id, const ImVec4& color, ImGuiColorEditFlags flags, const ImVec2& size) {
-            return ImGui::ColorButton(desc_id.c_str(), color, flags, size);
-        },
-        py::arg("desc_id"), py::arg("color"),
-        py::arg("flags") = ImGuiColorEditFlags_None, py::arg("size") = ImVec2(0.0f, 0.0f)
     );
 
     // ----- Drawing / Viewport -----

@@ -4,7 +4,6 @@
 #include "imgui_bindings.h"
 #include "bind_oal.h"
 
-namespace py = pybind11;
 
 PYBIND11_MODULE(glux, m) {
 

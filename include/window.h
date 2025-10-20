@@ -3,14 +3,11 @@
 #include <string>
 #include <functional>
 #include <utility>
-#include <iostream>
 #include <vector>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
-#include <pybind11/complex.h>
-#include <pybind11/chrono.h>
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
@@ -29,16 +26,7 @@ public:
            int gl_minor = 3,
            bool vsync = true,
            bool y_up = true);
-
     ~Window();
-
-    // Non-copyable
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
-
-    // Movable
-    Window(Window&& other) noexcept;
-    Window& operator=(Window&& other) noexcept;
 
     void run();
 
@@ -46,6 +34,7 @@ public:
     std::pair<int,int> get_size() const;
     std::pair<int,int> get_framebuffer_size() const;
     std::pair<int,int> get_position() const;
+    GLFWwindow* get_glfw_window() const { return window_; }
 
     const std::string& get_title() const { return title_; }
     bool is_y_up() const { return y_up_; }
@@ -64,7 +53,6 @@ public:
     void close();
 
     // Screenshot of the current framebuffer
-    // Returns a vector of RGBA8 bytes (width * height * 4)
     std::vector<unsigned char> screenshot(bool flip_vertically = true) const;
 
     // --- Cursor Control ---
@@ -81,25 +69,22 @@ public:
 private:
     GLFWwindow* window_ = nullptr;
     GLFWmonitor* monitor_ = nullptr;
-    int width_, height_;
+    int width_ = 0, height_ = 0;
     std::string title_;
-    int gl_major_, gl_minor_;
-    bool vsync_;
-    bool y_up_;
+    int gl_major_ = 3, gl_minor_ = 3;
+    bool vsync_ = true;
+    bool y_up_ = true;
     bool fullscreen_ = false;
-    
+
     Callback events_fn_;
     Callback process_fn_;
     Callback render_fn_;
     Callback render_ui_fn_;
-    
+
     void init_glfw();
     void init_imgui();
     void cleanup();
-    GLFWwindow* get_glfw_window() const;
-    friend int py_get_key(const Window&, int);
-    
-    // Static callbacks that forward to this instance
+
     static void framebuffer_size_callback(GLFWwindow* win, int w, int h);
     static void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods);
     static void mouse_button_callback(GLFWwindow* win, int button, int action, int mods);
@@ -108,5 +93,8 @@ private:
 };
 
 namespace py = pybind11;
+
+int get_kstate(int key);
+int get_mstate(int button);
 
 void bind_window(py::module_ &m);

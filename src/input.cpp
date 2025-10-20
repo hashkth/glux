@@ -2,6 +2,7 @@
 #define EXPORT_KEY(name) m.attr("K_" #name) = GLFW_KEY_##name
 #define EXPORT_MOUSE_BUTTON(name) m.attr("M_" #name) = GLFW_MOUSE_BUTTON_##name
 
+#include "window.h"
 #include "input.h"
 
 
@@ -34,15 +35,17 @@ void Cursor::set(double xpos, double ypos) {
 
 void bind_keyboard(py::module& m) {
     py::class_<Keyboard>(m, "Keyboard")
+        .def("held", [](Keyboard& self, int key) { return get_kstate(key); }, py::arg("key"))
         .def_readonly("key", &Keyboard::key)
         .def_readonly("scancode", &Keyboard::scancode)
         .def_readonly("action", &Keyboard::action)
         .def_readonly("mods", &Keyboard::mods);
-    m.attr("keyboard") = &keyboard;
-}
-
-void bind_mouse(py::module& m) {
-    py::class_<Mouse>(m, "Mouse")
+        m.attr("keyboard") = &keyboard;
+    }
+    
+    void bind_mouse(py::module& m) {
+        py::class_<Mouse>(m, "Mouse")
+        .def("held", [](Mouse& self, int key) { return get_mstate(key); }, py::arg("button"))
         .def_readonly("button", &Mouse::button)
         .def_readonly("action", &Mouse::action)
         .def_readonly("mods", &Mouse::mods)
