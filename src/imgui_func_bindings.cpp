@@ -186,6 +186,10 @@ void bind_imgui_core(py::module_& m) {
         py::arg("spacing") = 0.0f
     );
 
+    m.def("dummy", [](ImVec2 size) { ImGui::Dummy(size); },
+        py::arg("size")
+    );
+
     m.def("separator", &ImGui::Separator);
     m.def("spacing", &ImGui::Spacing);
 
