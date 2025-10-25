@@ -298,6 +298,7 @@ ALBuffer::~ALBuffer() {
 ALBuffer::ALBuffer(ALBuffer&& o) noexcept
     : ctx_(std::move(o.ctx_)), buf_id_(o.buf_id_), data_(std::move(o.data_)) {
     o.buf_id_ = 0;
+    o.ctx_.reset();
 }
 
 ALBuffer& ALBuffer::operator=(ALBuffer&& o) noexcept {
@@ -380,6 +381,7 @@ void ALSource::resume() {
 void ALSource::stop() {
     ctx_->make_current();
     alSourceStop(src_id_);
+    alSourcei(src_id_, AL_BUFFER, 0);
     OpenALContext::check_al_error("alSourceStop");
 }
 
@@ -446,7 +448,7 @@ WavStreamDecoder::WavStreamDecoder(const std::string& path) : file_(path, std::i
     if(std::strncmp(riff,"RIFF",4)!=0 || std::strncmp(wave,"WAVE",4)!=0)
         throw std::runtime_error("WAV: not a RIFF/WAVE file");
 
-    int16_t audio_format=0,num_channels=0,bps=0; int sr=0;
+    int16_t audio_format=0, num_channels=0, bps=0; int sr=0;
     bool have_fmt=false, have_data=false;
     while(file_) {
         char id[4]; uint32_t sz=0;
@@ -758,21 +760,21 @@ void bind_oal(py::module_& m) {
         .def_readonly("channels", &WaveData::channels)
         .def_readonly("sample_rate", &WaveData::sample_rate)
         .def_readonly("bits_per_sample", &WaveData::bits_per_sample)
-        .def("n_samples", &WaveData::n_samples)
-        .def("duration", &WaveData::duration)
-        .def("raw_data", &WaveData::raw_data);
+        .def_property_readonly("nsamples", &WaveData::n_samples)
+        .def_property_readonly("duration", &WaveData::duration)
+        .def("to_bytes", &WaveData::to_bytes);
 
     py::class_<OpenALContext, OpenALContextPtr>(m, "Context")
         .def(py::init([](){ return std::make_shared<OpenALContext>(); }))
-        .def("get_device_name", &OpenALContext::get_device_name)
         .def("__enter__", [](OpenALContext& self){ return self.enter(); })
         .def("__exit__", [](OpenALContext& self, py::object, py::object, py::object){ self.exit(); })
-        .def("create_source", &OpenALContext::create_source)
-        .def("create_buffer_from_file", &OpenALContext::create_buffer_from_file)
-        .def("create_stream", [](OpenALContext& self){
+        .def("get_device_name", &OpenALContext::get_device_name)
+        .def("source", &OpenALContext::create_source)
+        .def("buffer", &OpenALContext::create_buffer_from_file)
+        .def("stream", [](OpenALContext& self){
             return std::make_shared<ALStream>(self.shared_from_this());
             })
-        .def_static("decode_file", &OpenALContext::decode_file);
+        .def_static("decode", &OpenALContext::decode_file);
 
     py::class_<ALBuffer, std::shared_ptr<ALBuffer>>(m, "Buffer")
         .def("id", &ALBuffer::id)
@@ -787,8 +789,8 @@ void bind_oal(py::module_& m) {
         .def("rewind", &ALSource::rewind)
         .def("set_looping", &ALSource::set_looping)
         .def("set_gain", &ALSource::set_gain)
-        .def("set_offset_seconds", &ALSource::set_offset_seconds)
-        .def("get_offset_seconds", &ALSource::get_offset_seconds)
+        .def("set_offset", &ALSource::set_offset_seconds)
+        .def("get_offset", &ALSource::get_offset_seconds)
         .def("is_playing", &ALSource::is_playing)
         .def("is_paused", &ALSource::is_paused)
         .def("is_stopped", &ALSource::is_stopped);
@@ -804,10 +806,10 @@ void bind_oal(py::module_& m) {
         .def("is_paused", &ALStream::is_paused)
         .def("is_stopped", &ALStream::is_stopped)
         .def("set_gain", &ALStream::set_gain)
-        .def("set_offset_seconds", &ALStream::set_offset_seconds)
-        .def("get_offset_seconds", &ALStream::get_offset_seconds)
-        .def("channels", &ALStream::channels)
-        .def("sample_rate", &ALStream::sample_rate);
+        .def("set_offset", &ALStream::set_offset_seconds)
+        .def("get_offset", &ALStream::get_offset_seconds)
+        .def_property_readonly("channels", &ALStream::channels)
+        .def_property_readonly("sample_rate", &ALStream::sample_rate);
 
     // helpful constants
     m.attr("AL_FORMAT_MONO16") = AL_FORMAT_MONO16;

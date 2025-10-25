@@ -32,7 +32,7 @@ struct WaveData {
     double duration() const;  // seconds
 
     // expose raw PCM as Python bytes
-    py::bytes raw_data() const {
+    py::bytes to_bytes() const {
         return py::bytes(reinterpret_cast<const char*>(samples.data()),
                          samples.size() * sizeof(int16_t));
     }
@@ -110,7 +110,7 @@ public:
     // create resource wrappers
     std::shared_ptr<ALSource> create_source();
     std::shared_ptr<ALBuffer> create_buffer_from_file(const std::string& path);
-
+    
     // decoding function exposed (useful if user wants decoded data only)
     static WaveData decode_file(const std::string& path);
 
