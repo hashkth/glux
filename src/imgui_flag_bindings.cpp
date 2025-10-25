@@ -15,7 +15,7 @@
 #define ENUM_IMGUI_DATA_TYPE(name) .value(#name, ImGuiDataType_##name)
 #define ENUM_IMGUI_DIR(name) .value(#name, ImGuiDir_##name)
 #define ENUM_IMGUI_SORT_DIRECTION(name) .value(#name, ImGuiSortDirection_##name)
-#define ENUM_IMGUI_KEY(name) .value(#name, ImGuiKey_##name)
+#define ENUM_IMGUI_KEY(name) .value("K_" #name, ImGuiKey_##name)
 #define ENUM_IMGUI_INPUT_FLAGS(name) .value(#name, ImGuiInputFlags_##name)
 #define ENUM_IMGUI_CONFIG_FLAGS(name) .value(#name, ImGuiConfigFlags_##name)
 #define ENUM_IMGUI_COL(name) .value(#name, ImGuiCol_##name)
@@ -95,7 +95,7 @@ void bind_imgui_item_flags(py::module_& m) {
 
 void bind_imgui_input_text_flags(py::module_& m) {
     py::enum_<ImGuiInputTextFlags_>(m, "InputTextFlags", py::arithmetic())
-        .value("None", ImGuiInputTextFlags_None)
+        .value("None_", ImGuiInputTextFlags_None)
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CharsDecimal)
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CharsHexadecimal)
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CharsScientific)
