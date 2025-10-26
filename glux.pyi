@@ -1,0 +1,969 @@
+
+from typing import Tuple, Callable
+
+class ButtonFlags:
+    EnableNav: int
+    MouseButtonLeft: int
+    MouseButtonMask_: int
+    MouseButtonMiddle: int
+    MouseButtonRight: int
+    None_: int
+
+class ChildFlags:
+    AlwaysAutoResize: int
+    AlwaysUseWindowPadding: int
+    AutoResizeX: int
+    AutoResizeY: int
+    Borders: int
+    FrameStyle: int
+    None_: int
+    ResizeX: int
+    ResizeY: int
+
+class ColorEditFlags:
+    AlphaBar: int
+    AlphaMask_: int
+    AlphaNoBg: int
+    AlphaOpaque: int
+    AlphaPreviewHalf: int
+    DataTypeMask_: int
+    DefaultOptions_: int
+    DisplayHSV: int
+    DisplayHex: int
+    DisplayMask_: int
+    DisplayRGB: int
+    Float: int
+    HDR: int
+    InputHSV: int
+    InputMask_: int
+    InputRGB: int
+    NoAlpha: int
+    NoBorder: int
+    NoDragDrop: int
+    NoInputs: int
+    NoLabel: int
+    NoOptions: int
+    NoPicker: int
+    NoSidePreview: int
+    NoSmallPreview: int
+    NoTooltip: int
+    None_: int
+    PickerHueBar: int
+    PickerHueWheel: int
+    PickerMask_: int
+    Uint8: int
+
+class ComboFlags:
+    HeightLarge: int
+    HeightLargest: int
+    HeightMask_: int
+    HeightRegular: int
+    HeightSmall: int
+    NoArrowButton: int
+    NoPreview: int
+    None_: int
+    PopupAlignLeft: int
+    WidthFitPreview: int
+
+class ConfigFlags:
+    NavEnableGamepad: int
+    NavEnableKeyboard: int
+    NoKeyboard: int
+    NoMouse: int
+    NoMouseCursorChange: int
+    None_: int
+
+class DragDropFlags:
+    AcceptBeforeDelivery: int
+    AcceptNoDrawDefaultRect: int
+    AcceptNoPreviewTooltip: int
+    AcceptPeekOnly: int
+    None_: int
+    PayloadAutoExpire: int
+    PayloadNoCrossContext: int
+    PayloadNoCrossProcess: int
+    SourceAllowNullID: int
+    SourceExtern: int
+    SourceNoDisableHover: int
+    SourceNoHoldToOpenOthers: int
+    SourceNoPreviewTooltip: int
+
+class DrawFlags:
+    Closed: int
+    None_: int
+    RoundCornersAll: int
+    RoundCornersBottom: int
+    RoundCornersBottomLeft: int
+    RoundCornersBottomRight: int
+    RoundCornersDefault_: int
+    RoundCornersLeft: int
+    RoundCornersMask_: int
+    RoundCornersNone: int
+    RoundCornersRight: int
+    RoundCornersTop: int
+    RoundCornersTopLeft: int
+    RoundCornersTopRight: int
+
+class DrawListFlags:
+    AllowVtxOffset: int
+    AntiAliasedFill: int
+    AntiAliasedLines: int
+    AntiAliasedLinesUseTex: int
+    None_: int
+
+class FocusedFlags:
+    AnyWindow: int
+    ChildWindows: int
+    NoPopupHierarchy: int
+    None_: int
+    RootAndChildWindows: int
+    RootWindow: int
+
+class FontAtlasFlags:
+    NoBakedLines: int
+    NoMouseCursors: int
+    NoPowerOfTwoHeight: int
+    None_: int
+
+class HoveredFlags:
+    AllowWhenBlockedByActiveItem: int
+    AllowWhenBlockedByPopup: int
+    AllowWhenDisabled: int
+    AllowWhenOverlapped: int
+    AllowWhenOverlappedByItem: int
+    AllowWhenOverlappedByWindow: int
+    AnyWindow: int
+    ChildWindows: int
+    DelayNone: int
+    DelayNormal: int
+    DelayShort: int
+    ForTooltip: int
+    NoNavOverride: int
+    NoPopupHierarchy: int
+    NoSharedDelay: int
+    None_: int
+    RectOnly: int
+    RootAndChildWindows: int
+    RootWindow: int
+    Stationary: int
+
+class InputFlags:
+    None_: int
+    Repeat: int
+    RouteActive: int
+    RouteAlways: int
+    RouteFocused: int
+    RouteFromRootWindow: int
+    RouteGlobal: int
+    RouteOverActive: int
+    RouteOverFocused: int
+    RouteUnlessBgFocused: int
+    Tooltip: int
+
+class InputTextFlags:
+    AllowTabInput: int
+    AlwaysOverwrite: int
+    AutoSelectAll: int
+    CallbackAlways: int
+    CallbackCharFilter: int
+    CallbackCompletion: int
+    CallbackEdit: int
+    CallbackHistory: int
+    CallbackResize: int
+    CharsDecimal: int
+    CharsHexadecimal: int
+    CharsNoBlank: int
+    CharsScientific: int
+    CharsUppercase: int
+    CtrlEnterForNewLine: int
+    DisplayEmptyRefVal: int
+    ElideLeft: int
+    EnterReturnsTrue: int
+    EscapeClearsAll: int
+    NoHorizontalScroll: int
+    NoUndoRedo: int
+    None_: int
+    ParseEmptyRefVal: int
+    Password: int
+    ReadOnly: int
+
+class ItemFlags:
+    AllowDuplicateId: int
+    AutoClosePopups: int
+    ButtonRepeat: int
+    NoNav: int
+    NoNavDefaultFocus: int
+    NoTabStop: int
+    None_: int
+
+class MultiSelectFlags:
+    BoxSelect1d: int
+    BoxSelect2d: int
+    BoxSelectNoScroll: int
+    ClearOnClickVoid: int
+    ClearOnEscape: int
+    NoAutoClear: int
+    NoAutoClearOnReselect: int
+    NoAutoSelect: int
+    NoRangeSelect: int
+    NoSelectAll: int
+    None_: int
+    ScopeRect: int
+    ScopeWindow: int
+    SelectOnClick: int
+    SelectOnClickRelease: int
+    SingleSelect: int
+
+class PopupFlags:
+    AnyPopup: int
+    AnyPopupId: int
+    AnyPopupLevel: int
+    MouseButtonDefault_: int
+    MouseButtonLeft: int
+    MouseButtonMask_: int
+    MouseButtonMiddle: int
+    MouseButtonRight: int
+    NoOpenOverExistingPopup: int
+    NoOpenOverItems: int
+    NoReopen: int
+    None_: int
+
+class SelectableFlags:
+    AllowDoubleClick: int
+    AllowOverlap: int
+    Disabled: int
+    Highlight: int
+    NoAutoClosePopups: int
+    None_: int
+    SpanAllColumns: int
+
+class SliderFlags:
+    AlwaysClamp: int
+    ClampOnInput: int
+    ClampZeroRange: int
+    InvalidMask_: int
+    Logarithmic: int
+    NoInput: int
+    NoRoundToFormat: int
+    NoSpeedTweaks: int
+    None_: int
+    WrapAround: int
+
+class TabBarFlags:
+    AutoSelectNewTabs: int
+    DrawSelectedOverline: int
+    FittingPolicyDefault_: int
+    FittingPolicyMask_: int
+    FittingPolicyResizeDown: int
+    FittingPolicyScroll: int
+    NoCloseWithMiddleMouseButton: int
+    NoTabListScrollingButtons: int
+    NoTooltip: int
+    None_: int
+    Reorderable: int
+    TabListPopupButton: int
+
+class TabItemFlags:
+    Leading: int
+    NoAssumedClosure: int
+    NoCloseWithMiddleMouseButton: int
+    NoPushId: int
+    NoReorder: int
+    NoTooltip: int
+    None_: int
+    SetSelected: int
+    Trailing: int
+    UnsavedDocument: int
+
+class TableColumnFlags:
+    AngledHeader: int
+    DefaultHide: int
+    DefaultSort: int
+    Disabled: int
+    IndentDisable: int
+    IndentEnable: int
+    IsEnabled: int
+    IsHovered: int
+    IsSorted: int
+    IsVisible: int
+    NoClip: int
+    NoHeaderLabel: int
+    NoHeaderWidth: int
+    NoHide: int
+    NoReorder: int
+    NoResize: int
+    NoSort: int
+    NoSortAscending: int
+    NoSortDescending: int
+    None_: int
+    PreferSortAscending: int
+    PreferSortDescending: int
+    WidthFixed: int
+    WidthStretch: int
+
+class TableFlags:
+    Borders: int
+    BordersH: int
+    BordersInner: int
+    BordersInnerH: int
+    BordersInnerV: int
+    BordersOuter: int
+    BordersOuterH: int
+    BordersOuterV: int
+    BordersV: int
+    ContextMenuInBody: int
+    Hideable: int
+    HighlightHoveredColumn: int
+    NoBordersInBody: int
+    NoBordersInBodyUntilResize: int
+    NoClip: int
+    NoHostExtendX: int
+    NoHostExtendY: int
+    NoKeepColumnsVisible: int
+    NoPadInnerX: int
+    NoPadOuterX: int
+    NoSavedSettings: int
+    None_: int
+    PadOuterX: int
+    PreciseWidths: int
+    Reorderable: int
+    Resizable: int
+    RowBg: int
+    ScrollX: int
+    ScrollY: int
+    SizingFixedFit: int
+    SizingFixedSame: int
+    SizingStretchProp: int
+    SizingStretchSame: int
+    SortMulti: int
+    SortTristate: int
+    Sortable: int
+
+class TableRowFlags:
+    Headers: int
+    None_: int
+
+class TreeNodeFlags:
+    AllowOverlap: int
+    Bullet: int
+    CollapsingHeader: int
+    DefaultOpen: int
+    FramePadding: int
+    Framed: int
+    LabelSpanAllColumns: int
+    Leaf: int
+    NavLeftJumpsToParent: int
+    NoAutoOpenOnLog: int
+    NoTreePushOnOpen: int
+    None_: int
+    OpenOnArrow: int
+    OpenOnDoubleClick: int
+    Selected: int
+    SpanAllColumns: int
+    SpanAvailWidth: int
+    SpanFullWidth: int
+    SpanLabelWidth: int
+
+class WindowFlags:
+    AlwaysAutoResize: int
+    AlwaysHorizontalScrollbar: int
+    AlwaysVerticalScrollbar: int
+    HorizontalScrollbar: int
+    MenuBar: int
+    NoBackground: int
+    NoBringToFrontOnFocus: int
+    NoCollapse: int
+    NoDecoration: int
+    NoFocusOnAppearing: int
+    NoInputs: int
+    NoMouseInputs: int
+    NoMove: int
+    NoNav: int
+    NoNavFocus: int
+    NoNavInputs: int
+    NoResize: int
+    NoSavedSettings: int
+    NoScrollWithMouse: int
+    NoScrollbar: int
+    NoTitleBar: int
+    None_: int
+    UnsavedDocument: int
+
+class DataType:
+    Bool: int
+    Double: int
+    Float: int
+    S16: int
+    S32: int
+    S64: int
+    S8: int
+    String: int
+    U16: int
+    U32: int
+    U64: int
+    U8: int
+
+class Dir:
+    Down: int
+    Left: int
+    None_: int
+    Right: int
+    Up: int
+
+class SortDirection:
+    Ascending: int
+    Descending: int
+    None_: int
+
+class Key:
+    K_0: int
+    K_1: int
+    K_2: int
+    K_3: int
+    K_4: int
+    K_5: int
+    K_6: int
+    K_7: int
+    K_8: int
+    K_9: int
+    K_A: int
+    K_Apostrophe: int
+    K_AppBack: int
+    K_AppForward: int
+    K_B: int
+    K_Backslash: int
+    K_Backspace: int
+    K_C: int
+    K_CapsLock: int
+    K_Comma: int
+    K_D: int
+    K_Delete: int
+    K_DownArrow: int
+    K_E: int
+    K_End: int
+    K_Enter: int
+    K_Equal: int
+    K_Escape: int
+    K_F: int
+    K_F1: int
+    K_F10: int
+    K_F11: int
+    K_F12: int
+    K_F13: int
+    K_F14: int
+    K_F15: int
+    K_F16: int
+    K_F17: int
+    K_F18: int
+    K_F19: int
+    K_F2: int
+    K_F20: int
+    K_F21: int
+    K_F22: int
+    K_F23: int
+    K_F24: int
+    K_F3: int
+    K_F4: int
+    K_F5: int
+    K_F6: int
+    K_F7: int
+    K_F8: int
+    K_F9: int
+    K_G: int
+    K_GamepadBack: int
+    K_GamepadDpadDown: int
+    K_GamepadDpadLeft: int
+    K_GamepadDpadRight: int
+    K_GamepadDpadUp: int
+    K_GamepadFaceDown: int
+    K_GamepadFaceLeft: int
+    K_GamepadFaceRight: int
+    K_GamepadFaceUp: int
+    K_GamepadL1: int
+    K_GamepadL2: int
+    K_GamepadL3: int
+    K_GamepadLStickDown: int
+    K_GamepadLStickLeft: int
+    K_GamepadLStickRight: int
+    K_GamepadLStickUp: int
+    K_GamepadR1: int
+    K_GamepadR2: int
+    K_GamepadR3: int
+    K_GamepadRStickDown: int
+    K_GamepadRStickLeft: int
+    K_GamepadRStickRight: int
+    K_GamepadRStickUp: int
+    K_GamepadStart: int
+    K_GraveAccent: int
+    K_H: int
+    K_Home: int
+    K_I: int
+    K_Insert: int
+    K_J: int
+    K_K: int
+    K_Keypad0: int
+    K_Keypad1: int
+    K_Keypad2: int
+    K_Keypad3: int
+    K_Keypad4: int
+    K_Keypad5: int
+    K_Keypad6: int
+    K_Keypad7: int
+    K_Keypad8: int
+    K_Keypad9: int
+    K_KeypadAdd: int
+    K_KeypadDecimal: int
+    K_KeypadDivide: int
+    K_KeypadEnter: int
+    K_KeypadEqual: int
+    K_KeypadMultiply: int
+    K_KeypadSubtract: int
+    K_L: int
+    K_LeftAlt: int
+    K_LeftArrow: int
+    K_LeftBracket: int
+    K_LeftCtrl: int
+    K_LeftShift: int
+    K_LeftSuper: int
+    K_M: int
+    K_Menu: int
+    K_Minus: int
+    K_MouseLeft: int
+    K_MouseMiddle: int
+    K_MouseRight: int
+    K_MouseWheelX: int
+    K_MouseWheelY: int
+    K_MouseX1: int
+    K_MouseX2: int
+    K_N: int
+    K_NumLock: int
+    K_O: int
+    K_Oem102: int
+    K_P: int
+    K_PageDown: int
+    K_PageUp: int
+    K_Pause: int
+    K_Period: int
+    K_PrintScreen: int
+    K_Q: int
+    K_R: int
+    K_RightAlt: int
+    K_RightArrow: int
+    K_RightBracket: int
+    K_RightCtrl: int
+    K_RightShift: int
+    K_RightSuper: int
+    K_S: int
+    K_ScrollLock: int
+    K_Semicolon: int
+    K_Slash: int
+    K_Space: int
+    K_T: int
+    K_Tab: int
+    K_U: int
+    K_UpArrow: int
+    K_V: int
+    K_W: int
+    K_X: int
+    K_Y: int
+    K_Z: int
+    Mod_Alt: int
+    Mod_Ctrl: int
+    Mod_Mask_: int
+    Mod_None_: int
+    Mod_Shift: int
+    Mod_Super: int
+    None_: int
+
+class Col:
+    Border: int
+    BorderShadow: int
+    Button: int
+    ButtonActive: int
+    ButtonHovered: int
+    CheckMark: int
+    ChildBg: int
+    DragDropTarget: int
+    FrameBg: int
+    FrameBgActive: int
+    FrameBgHovered: int
+    Header: int
+    HeaderActive: int
+    HeaderHovered: int
+    InputTextCursor: int
+    MenuBarBg: int
+    ModalWindowDimBg: int
+    NavCursor: int
+    NavWindowingDimBg: int
+    NavWindowingHighlight: int
+    PlotHistogram: int
+    PlotHistogramHovered: int
+    PlotLines: int
+    PlotLinesHovered: int
+    PopupBg: int
+    ResizeGrip: int
+    ResizeGripActive: int
+    ResizeGripHovered: int
+    ScrollbarBg: int
+    ScrollbarGrab: int
+    ScrollbarGrabActive: int
+    ScrollbarGrabHovered: int
+    Separator: int
+    SeparatorActive: int
+    SeparatorHovered: int
+    SliderGrab: int
+    SliderGrabActive: int
+    Tab: int
+    TabDimmed: int
+    TabDimmedSelected: int
+    TabDimmedSelectedOverline: int
+    TabHovered: int
+    TabSelected: int
+    TabSelectedOverline: int
+    TableBorderLight: int
+    TableBorderStrong: int
+    TableHeaderBg: int
+    TableRowBg: int
+    TableRowBgAlt: int
+    Text: int
+    TextDisabled: int
+    TextLink: int
+    TextSelectedBg: int
+    TitleBg: int
+    TitleBgActive: int
+    TitleBgCollapsed: int
+    TreeLines: int
+    WindowBg: int
+
+class StyleVar:
+    Alpha: int
+    ButtonTextAlign: int
+    CellPadding: int
+    ChildBorderSize: int
+    ChildRounding: int
+    DisabledAlpha: int
+    FrameBorderSize: int
+    FramePadding: int
+    FrameRounding: int
+    GrabMinSize: int
+    GrabRounding: int
+    ImageBorderSize: int
+    IndentSpacing: int
+    ItemInnerSpacing: int
+    ItemSpacing: int
+    PopupBorderSize: int
+    PopupRounding: int
+    ScrollbarRounding: int
+    ScrollbarSize: int
+    SelectableTextAlign: int
+    SeparatorTextAlign: int
+    SeparatorTextBorderSize: int
+    SeparatorTextPadding: int
+    TabBarBorderSize: int
+    TabBarOverlineSize: int
+    TabBorderSize: int
+    TabRounding: int
+    TableAngledHeadersAngle: int
+    TableAngledHeadersTextAlign: int
+    TreeLinesRounding: int
+    TreeLinesSize: int
+    WindowBorderSize: int
+    WindowMinSize: int
+    WindowPadding: int
+    WindowRounding: int
+    WindowTitleAlign: int
+
+class MouseButton:
+    Left: int
+    Middle: int
+    Right: int
+
+class MouseCursor:
+    Arrow: int
+    Hand: int
+    None_: int
+    NotAllowed: int
+    Progress: int
+    ResizeAll: int
+    ResizeEW: int
+    ResizeNESW: int
+    ResizeNS: int
+    ResizeNWSE: int
+    TextInput: int
+    Wait: int
+
+class Cond:
+    Always: int
+    Appearing: int
+    FirstUseEver: int
+    None_: int
+    Once: int
+
+class TableBgTarget:
+    CellBg: int
+    None_: int
+    RowBg0: int
+    RowBg1: int
+
+class SelectionRequestType:
+    None_: int
+    SetAll: int
+    SetRange: int
+
+class _ImGui:
+    ButtonFlags: ButtonFlags
+    ChildFlags: ChildFlags
+    ColorEditFlags: ColorEditFlags
+    ComboFlags: ComboFlags
+    ConfigFlags: ConfigFlags
+    DragDropFlags: DragDropFlags
+    DrawFlags: DrawFlags
+    DrawListFlags: DrawListFlags
+    FocusedFlags: FocusedFlags
+    FontAtlasFlags: FontAtlasFlags
+    HoveredFlags: HoveredFlags
+    InputFlags: InputFlags
+    InputTextFlags: InputTextFlags
+    ItemFlags: ItemFlags
+    MultiSelectFlags: MultiSelectFlags
+    PopupFlags: PopupFlags
+    SelectableFlags: SelectableFlags
+    SliderFlags: SliderFlags
+    TabBarFlags: TabBarFlags
+    TabItemFlags: TabItemFlags
+    TableColumnFlags: TableColumnFlags
+    TableFlags: TableFlags
+    TableRowFlags: TableRowFlags
+    TreeNodeFlags: TreeNodeFlags
+    WindowFlags: WindowFlags
+    DataType: DataType
+    Dir: Dir
+    SortDirection: SortDirection
+    Key: Key
+    Col: Col
+    StyleVar: StyleVar
+    MouseButton: MouseButton
+    MouseCursor: MouseCursor
+    Cond: Cond
+    TableBgTarget: TableBgTarget
+    SelectionRequestType: SelectionRequestType
+
+imgui: _ImGui
+
+class CursorMode:
+
+    Normal: int
+    Hidden: int
+    Disabled: int
+
+class Window:
+
+    def __init__(self, width: int, height: int, title: str = "GLUX", gl_major: int = 3, gl_minor: int = 3, vsync: bool = True, y_up: bool = True) -> Window: ...
+    def run(self) -> None: ...
+    def get_size(self) -> Tuple[int, int]: ...
+    def get_framebuffer_size(self) -> Tuple[int, int]: ...
+    def get_position(self) -> Tuple[int, int]: ...
+    def get_title(self) -> str: ...
+    def is_y_up(self) -> bool: ...
+    def is_vsync(self) -> bool: ...
+    def is_fullscreen(self) -> bool: ...
+    def should_close(self) -> bool: ...
+    def screenshot(self, flip_vertically: bool) -> bytes: ...
+    def set_size(self, width: int, height: int) -> None: ...
+    def set_title(self, title: str) -> None: ...
+    def set_vsync(self, vsync: bool) -> None: ...
+    def set_y_up(self, y_up: bool) -> None: ...
+    def set_position(self, x: int, y: int) -> None: ...
+    def set_fullscreen(self, fullscreen: bool) -> None: ...
+    def set_icon(self, data: bytes, width: int, height: int) -> None: ...
+    def close(self) -> None: ...
+    def set_cursor_visible(self, visible: bool) -> None: ...
+    def set_cursor_mode(self, mode: CursorMode) -> None: ...
+    def set_events_callback(self, callback: Callable[[], None]) -> None: ...
+    def set_process_callback(self, callback: Callable[[], None]) -> None: ...
+    def set_render_callback(self, callback: Callable[[], None]) -> None: ...
+    def set_render_ui_callback(self, callback: Callable[[], None]) -> None: ...
+
+class Keyboard:
+
+    key: int
+    scancode: int
+    action: int
+    mods: int
+    def held(self, key: int) -> bool: ...
+
+keyboard: Keyboard
+
+class Mouse:
+
+    button: int
+    action: int
+    mod: int
+    xoffset : int
+    yoffset : int
+    def held(self, button: int) -> bool: ...
+
+mouse: Mouse
+
+class Cursor:
+
+    x: float
+    y: float
+
+cursor: Cursor
+
+class mods:
+
+    SHIFT: int
+    CONTROL: int
+    ALT: int
+    SUPER: int
+    CAPS_LOCK: int
+    NUM_LOCK: int
+
+class actions:
+
+    PRESS: int
+    RELEASE: int
+    REPEAT: int
+
+class scancodes:
+
+    KEY_UNKNOWN: int
+
+class keys:
+
+    K_SPACE: int
+    K_APOSTROPHE: int
+    K_COMMA: int
+    K_MINUS: int
+    K_PERIOD: int
+    K_SLASH: int
+    K_0: int
+    K_1: int
+    K_2: int
+    K_3: int
+    K_4: int
+    K_5: int
+    K_6: int
+    K_7: int
+    K_8: int
+    K_9: int
+    K_SEMICOLON: int
+    K_EQUAL: int
+    K_A: int
+    K_B: int
+    K_C: int
+    K_D: int
+    K_E: int
+    K_F: int
+    K_G: int
+    K_H: int
+    K_I: int
+    K_J: int
+    K_K: int
+    K_L: int
+    K_M: int
+    K_N: int
+    K_O: int
+    K_P: int
+    K_Q: int
+    K_R: int
+    K_S: int
+    K_T: int
+    K_U: int
+    K_V: int
+    K_W: int
+    K_X: int
+    K_Y: int
+    K_Z: int
+    K_LEFT_BRACKET: int
+    K_BACKSLASH: int
+    K_RIGHT_BRACKET: int
+    K_GRAVE_ACCENT: int
+    K_WORLD_1: int
+    K_WORLD_2: int
+    K_ESCAPE: int
+    K_ENTER: int
+    K_TAB: int
+    K_BACKSPACE: int
+    K_INSERT: int
+    K_DELETE: int
+    K_RIGHT: int
+    K_LEFT: int
+    K_DOWN: int
+    K_UP: int
+    K_PAGE_UP: int
+    K_PAGE_DOWN: int
+    K_HOME: int
+    K_END: int
+    K_CAPS_LOCK: int
+    K_SCROLL_LOCK: int
+    K_NUM_LOCK: int
+    K_PRINT_SCREEN: int
+    K_PAUSE: int
+    K_F1: int
+    K_F2: int
+    K_F3: int
+    K_F4: int
+    K_F5: int
+    K_F6: int
+    K_F7: int
+    K_F8: int
+    K_F9: int
+    K_F10: int
+    K_F11: int
+    K_F12: int
+    K_F13: int
+    K_F14: int
+    K_F15: int
+    K_F16: int
+    K_F17: int
+    K_F18: int
+    K_F19: int
+    K_F20: int
+    K_F21: int
+    K_F22: int
+    K_F23: int
+    K_F24: int
+    K_F25: int
+    K_KP_0: int
+    K_KP_1: int
+    K_KP_2: int
+    K_KP_3: int
+    K_KP_4: int
+    K_KP_5: int
+    K_KP_6: int
+    K_KP_7: int
+    K_KP_8: int
+    K_KP_9: int
+    K_KP_DECIMAL: int
+    K_KP_DIVIDE: int
+    K_KP_MULTIPLY: int
+    K_KP_SUBTRACT: int
+    K_KP_ADD: int
+    K_KP_ENTER: int
+    K_KP_EQUAL: int
+    K_LEFT_SHIFT: int
+    K_LEFT_CONTROL: int
+    K_LEFT_ALT: int
+    K_LEFT_SUPER: int
+    K_RIGHT_SHIFT: int
+    K_RIGHT_CONTROL: int
+    K_RIGHT_ALT: int
+    K_RIGHT_SUPER: int
+    K_MENU: int
+
+class buttons:
+
+    M_1: int
+    M_2: int
+    M_3: int
+    M_4: int
+    M_5: int
+    M_6: int
+    M_7: int
+    M_8: int
+    M_LEFT: int
+    M_RIGHT: int
+    M_MIDDLE: int
