@@ -18,13 +18,34 @@ void bind_imgui_vecs(py::module_& m) {
 
 void bind_imgui_color(py::module_& m) {
     py::class_<ImColor>(m, "Color")
-        .def(py::init<float, float, float, float>(), py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a") = 1.0f)
+        .def(py::init<float, float, float, float>(),
+             py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a") = 1.0f)
+
         .def(py::init<const ImVec4&>())
+        
+        .def_property("r",
+            [](const ImColor& self) { return self.Value.x; },
+            [](ImColor& self, float v) { self.Value.x = v; })
+
+        .def_property("g",
+            [](const ImColor& self) { return self.Value.y; },
+            [](ImColor& self, float v) { self.Value.y = v; })
+
+        .def_property("b",
+            [](const ImColor& self) { return self.Value.z; },
+            [](ImColor& self, float v) { self.Value.z = v; })
+
+        .def_property("a",
+            [](const ImColor& self) { return self.Value.w; },
+            [](ImColor& self, float v) { self.Value.w = v; })
+
         .def("to_vec4", [](const ImColor& color) {
-        return ImVec4(color.Value.x, color.Value.y, color.Value.z, color.Value.w);
-            })
-        .def_readwrite("value", &ImColor::Value);  // Optional: expose raw value
+            return ImVec4(color.Value.x, color.Value.y, color.Value.z, color.Value.w);
+        })
+
+        .def_readwrite("value", &ImColor::Value);
 }
+
 
 void bind_imgui_io(py::module_& m) {
     py::class_<ImGuiIO>(m, "IO")
