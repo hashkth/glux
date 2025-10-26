@@ -94,7 +94,7 @@ private:
 
 namespace py = pybind11;
 
-int get_kstate(int key);
-int get_mstate(int button);
+bool get_kstate(int key);
+bool get_mstate(int button);
 
 void bind_window(py::module_ &m);

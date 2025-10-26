@@ -187,12 +187,12 @@ void Window::set_position(int x, int y) {
     if (window_) glfwSetWindowPos(window_, x, y);
 }
 
-int get_kstate(int key) {
+bool get_kstate(int key) {
     if (!g_window) return 0;
     return glfwGetKey(g_window->get_glfw_window(), key);
 }
 
-int get_mstate(int button)
+bool get_mstate(int button)
 {
     if (!g_window) return GLFW_RELEASE;
     return glfwGetMouseButton(g_window->get_glfw_window(), button);

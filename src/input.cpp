@@ -45,7 +45,7 @@ void bind_keyboard(py::module& m) {
     
     void bind_mouse(py::module& m) {
         py::class_<Mouse>(m, "Mouse")
-        .def("held", [](Mouse& self, int key) { return get_mstate(key); }, py::arg("button"))
+        .def("held", [](Mouse& self, int button) { return get_mstate(button); }, py::arg("button"))
         .def_readonly("button", &Mouse::button)
         .def_readonly("action", &Mouse::action)
         .def_readonly("mods", &Mouse::mods)
