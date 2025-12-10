@@ -30,7 +30,6 @@ public:
 
     void run();
 
-    // --- Core Window State ---
     std::pair<int,int> get_size() const;
     std::pair<int,int> get_framebuffer_size() const;
     std::pair<int,int> get_position() const;
@@ -42,25 +41,26 @@ public:
     bool is_fullscreen() const { return fullscreen_; }
     bool should_close() const;
 
-    // --- Setters ---
     void set_size(int width, int height);
     void set_title(const std::string& title);
     void set_vsync(bool enabled);
     void set_y_up(bool y_up);
     void set_position(int x, int y);
     void set_fullscreen(bool enabled);
+    void set_opacity(float alpha);
+    void set_resizable(bool);
+    void set_decorated(bool);
+    void set_floating(bool);
     void set_icon(int width, int height, const unsigned char* pixels);
     void close();
 
-    // Screenshot of the current framebuffer
     std::vector<unsigned char> screenshot(bool flip_vertically = true) const;
 
-    // --- Cursor Control ---
     enum class CursorMode { Normal, Hidden, Disabled };
     void set_cursor_visible(bool visible);
     void set_cursor_mode(CursorMode mode);
+    void set_cursor_position(float x, float y);
 
-    // --- User Callbacks ---
     void set_events_callback(Callback cb) { events_fn_ = std::move(cb); }
     void set_process_callback(Callback cb) { process_fn_ = std::move(cb); }
     void set_render_callback(Callback cb) { render_fn_ = std::move(cb); }
@@ -91,6 +91,8 @@ private:
     static void scroll_callback(GLFWwindow* win, double xoffset, double yoffset);
     static void cursor_position_callback(GLFWwindow* win, double xpos, double ypos);
 };
+
+extern Window* g_window;
 
 namespace py = pybind11;
 

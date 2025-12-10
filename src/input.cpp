@@ -57,7 +57,10 @@ void bind_keyboard(py::module& m) {
 void bind_cursor(py::module& m) {
     py::class_<Cursor>(m, "Cursor")
         .def_readonly("x", &Cursor::x)
-        .def_readonly("y", &Cursor::y);
+        .def_readonly("y", &Cursor::y)
+        .def_static("set_mode", [](Window::CursorMode mode) {g_window->set_cursor_mode(mode);})
+        .def_static("set_visible", [](bool visible) {g_window->set_cursor_visible(visible);})
+        .def_static("set_pos", [](float x, float y) {g_window->set_cursor_position(x, y);});
     m.attr("cursor") = &cursor;
 }
 

@@ -179,6 +179,13 @@ void bind_imgui_core(py::module_& m) {
 
     m.def("pop_style_var", &ImGui::PopStyleVar, py::arg("count") = 1);
     m.def("pop_style_color", &ImGui::PopStyleColor, py::arg("count") = 1);
+    m.def("push_item_width", &ImGui::PushItemWidth, py::arg("width"));
+    m.def("pop_item_width", &ImGui::PopItemWidth);
+    m.def("set_next_item_width", &ImGui::SetNextItemWidth, py::arg("width"));
+    m.def("indent", &ImGui::Indent, py::arg("indent_w"));
+    m.def("unindent", &ImGui::Unindent);
+    m.def("begin_group", &ImGui::BeginGroup);
+    m.def("end_group", &ImGui::EndGroup);    
 
     // ----- Layout / Spacing -----
     m.def("same_line", &ImGui::SameLine,
@@ -495,6 +502,13 @@ void bind_imgui_core(py::module_& m) {
         },
         py::arg("texture_id"), py::arg("width"), py::arg("height"),
         py::arg("uv0"), py::arg("uv1")
+    );
+
+    m.def("calc_text_size",
+        [](const std::string& text) {
+            ImVec2 size = ImGui::CalcTextSize(text.c_str());
+            return std::make_tuple(size.x, size.y);
+        }
     );
 
     m.def("get_available_region",

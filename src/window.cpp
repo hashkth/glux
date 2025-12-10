@@ -1,7 +1,7 @@
 #include "window.h"
 #include "input.h"
 
-static Window* g_window = nullptr;
+Window* g_window = nullptr;
 
 Window::Window(int width, int height, const std::string& title,
                int gl_major, int gl_minor,
@@ -45,10 +45,8 @@ void Window::init_glfw() {
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    // Store this as the global window
     g_window = this;
 
-    // Set GLFW callbacks
     glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback);
     glfwSetKeyCallback(window_, key_callback);
     glfwSetMouseButtonCallback(window_, mouse_button_callback);
@@ -94,7 +92,6 @@ void Window::run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window_);
 
-        // Reset input state
         keyboard.scancode = -1; 
         keyboard.action = -1; 
         keyboard.mods = 0; 
@@ -217,6 +214,15 @@ void Window::set_cursor_visible(bool visible) {
         glfwSetInputMode(window_, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
 }
 
+void Window::set_cursor_position(float xpos, float ypos){
+    if (window_)
+        glfwSetCursorPos(window_, xpos, ypos);
+        if (g_window->y_up_)
+            cursor.set(xpos, g_window->height_ - ypos - 1);
+        else
+            cursor.set(xpos, ypos);
+}
+
 void Window::set_cursor_mode(CursorMode mode) {
     if (!window_) return;
     int mode_value = GLFW_CURSOR_NORMAL;
@@ -226,6 +232,24 @@ void Window::set_cursor_mode(CursorMode mode) {
         case CursorMode::Disabled: mode_value = GLFW_CURSOR_DISABLED; break;
     }
     glfwSetInputMode(window_, GLFW_CURSOR, mode_value);
+}
+
+void Window::set_opacity(float alpha) {
+    if (alpha < 0.0) alpha = 0.0;
+    if (alpha > 1.0) alpha = 1.0;
+    glfwSetWindowOpacity(window_, alpha);
+}
+
+void Window::set_resizable(bool value) {
+    glfwSetWindowAttrib(window_, GLFW_RESIZABLE, value ? GLFW_TRUE : GLFW_FALSE);
+}
+
+void Window::set_decorated(bool value) {
+    glfwSetWindowAttrib(window_, GLFW_DECORATED, value ? GLFW_TRUE : GLFW_FALSE);
+}
+
+void Window::set_floating(bool value) {
+    glfwSetWindowAttrib(window_, GLFW_FLOATING, value ? GLFW_TRUE : GLFW_FALSE);
 }
 
 void Window::set_icon(int width, int height, const unsigned char* pixels) {
@@ -271,7 +295,6 @@ void bind_window(py::module_ &m)
 
         .def("run", &Window::run)
 
-        // Window state
         .def("get_size", &Window::get_size)
         .def("get_framebuffer_size", &Window::get_framebuffer_size)
         .def("get_position", &Window::get_position)
@@ -285,30 +308,27 @@ void bind_window(py::module_ &m)
             return py::bytes(reinterpret_cast<const char*>(vec.data()), vec.size());
         }, py::arg("flip_vertically")=true)
 
-        // Mutators
         .def("set_size", &Window::set_size)
         .def("set_title", &Window::set_title)
         .def("set_vsync", &Window::set_vsync)
         .def("set_y_up", &Window::set_y_up)
         .def("set_position", &Window::set_position)
         .def("set_fullscreen", &Window::set_fullscreen)
+        .def("set_opacity", &Window::set_opacity)
+        .def("set_resizable", &Window::set_resizable)
+        .def("set_decorated", &Window::set_decorated)
+        .def("set_floating", &Window::set_floating)
         .def("set_icon", [](Window &w, py::bytes data, int width, int height) {
                 std::string s = data;  // convert bytes to string buffer
                 w.set_icon(width, height, reinterpret_cast<const unsigned char*>(s.data()));
             }, py::arg("data"), py::arg("width"), py::arg("height"))
         .def("close", &Window::close)
 
-        // Cursor
-        .def("set_cursor_visible", &Window::set_cursor_visible)
-        .def("set_cursor_mode", &Window::set_cursor_mode)
-
-        // Callbacks
         .def("set_events_callback", &Window::set_events_callback)
         .def("set_process_callback", &Window::set_process_callback)
         .def("set_render_callback", &Window::set_render_callback)
         .def("set_render_ui_callback", &Window::set_render_ui_callback);
 
-    // Proper enum binding
     py::enum_<Window::CursorMode>(m, "CursorMode")
         .value("Normal", Window::CursorMode::Normal)
         .value("Hidden", Window::CursorMode::Hidden)
