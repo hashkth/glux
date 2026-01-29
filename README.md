@@ -1,5 +1,5 @@
 # GLUX
-GLUX is a Python library for multimedia applications powered by GLFW, ImGui, and OpenAL Soft.
+GLUX is a Python library for making multimedia applications powered by GLFW and Dear ImGui
 
 ## Installation
 GLUX is available on PyPI and can be installed via: `pip install glux`
@@ -13,16 +13,12 @@ Ensure that you have installed MSVC compiler and then follow the following steps
 - Run build.bat
 - Copy `release/glux.pyd` and use it in your projects
 
-## Documentation
-Refer our [Wiki](https://github.com/hashkth/glux/wiki) for a comprehensive guide on using GLUX.
-
 ## Licenses
-Percept bundles trimmed or modified versions of several open-source libraries. License files for each are included in the `external/` directory:
+GLUX bundles trimmed or modified versions of several open-source libraries. License files for each library are included in the `external/` directory:
 
 - GLFW (zlib/libpng)
 - Dear ImGui (MIT)
 - glad (Public Domain / MIT)
-- OpenAL Soft (LGPL)
 
 ## Additional Notes
 - Currently, the builds are targeted for Windows 64-bit systems only.

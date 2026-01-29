@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: List of Python versions to build against
-set PYTHONS=311 312 313
+set PYTHONS=313
 
 :: Path prefix to your Python installations
 set PYTHON_BASE=C:\Users\kanth\AppData\Local\Programs\Python
