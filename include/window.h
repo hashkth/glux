@@ -90,6 +90,7 @@ private:
     static void mouse_button_callback(GLFWwindow* win, int button, int action, int mods);
     static void scroll_callback(GLFWwindow* win, double xoffset, double yoffset);
     static void cursor_position_callback(GLFWwindow* win, double xpos, double ypos);
+    static void cursor_enter_callback(GLFWwindow* win, int entered);
 };
 
 extern Window* g_window;

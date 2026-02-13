@@ -31,10 +31,13 @@ public:
 
 class Cursor {
 public:
-    double x = 0.0;
-    double y = 0.0;
+    double x = 0, y = 0;
+    double dx = 0, dy = 0;
+    double lx = 0, ly = 0;
+    bool in_bounds = false;
 
     void set(double xpos, double ypos);
+    void reset_deltas();
 };
 
 extern Keyboard keyboard;

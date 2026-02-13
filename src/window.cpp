@@ -52,6 +52,7 @@ void Window::init_glfw() {
     glfwSetMouseButtonCallback(window_, mouse_button_callback);
     glfwSetScrollCallback(window_, scroll_callback);
     glfwSetCursorPosCallback(window_, cursor_position_callback);
+    glfwSetCursorEnterCallback(window_, cursor_enter_callback);
 }
 
 void Window::init_imgui() {
@@ -100,6 +101,7 @@ void Window::run() {
         mouse.mods = 0; 
         mouse.xoffset = 0.0; 
         mouse.yoffset = 0.0;
+        cursor.reset_deltas();
 
         glfwPollEvents();
     }
@@ -158,6 +160,12 @@ void Window::cursor_position_callback(GLFWwindow*, double xpos, double ypos) {
         cursor.set(xpos, g_window->height_ - ypos - 1);
     else
         cursor.set(xpos, ypos);
+    cursor.in_bounds = (xpos >= 0 && xpos < g_window->width_ && 
+                        ypos >= 0 && ypos < g_window->height_);
+}
+
+void Window::cursor_enter_callback(GLFWwindow* window, int entered) {
+    cursor.in_bounds = (entered == GLFW_TRUE);
 }
 
 bool Window::should_close() const {
