@@ -1,4 +1,4 @@
-// imgui_func_bindings.cpp — refactored
+
 #include "imgui_bindings.h"
 
 #include <array>
@@ -69,12 +69,11 @@ static inline auto do_input_text_single(const std::string& label,
     bool changed = ImGui::InputText(
         label.c_str(),
         buffer.data(),
-        buffer.capacity(),
+        buffer.size(),  // must be size(), not capacity() — ImGui writes up to (buf_size-1) bytes
         flags | ImGuiInputTextFlags_CallbackResize,
         input_text_resize_callback,
         &user_data
     );
-    // shrink to actual length (remove pre-allocated space)
     buffer.resize(std::strlen(buffer.c_str()));
     return std::make_tuple(changed, buffer);
 }
@@ -90,12 +89,11 @@ static inline auto do_input_text_with_hint_single(const std::string& label,
         label.c_str(),
         hint.c_str(),
         buffer.data(),
-        buffer.capacity(),
+        buffer.size(),  // must be size(), not capacity()
         flags | ImGuiInputTextFlags_CallbackResize,
         input_text_resize_callback,
         &user_data
     );
-    // shrink to actual length (remove pre-allocated space)
     buffer.resize(std::strlen(buffer.c_str()));
     return std::make_tuple(changed, buffer);
 }
@@ -110,7 +108,7 @@ static inline auto do_input_text_multiline(const std::string& label,
     bool changed = ImGui::InputTextMultiline(
         label.c_str(),
         buffer.data(),
-        buffer.capacity(),
+        buffer.size(),  // must be size(), not capacity()
         size,
         flags | ImGuiInputTextFlags_CallbackResize,
         input_text_resize_callback,
@@ -128,13 +126,18 @@ void bind_imgui_core(py::module_& m) {
     // ----- Core windowing -----
 
     m.def("begin",
-        [](const std::string& name, bool p_open, ImGuiWindowFlags flags) {
-            bool open = p_open;
+        [](const std::string& name, py::object p_open, ImGuiWindowFlags flags) {
+            if (p_open.is_none()) {
+                // No close button: pass nullptr, return only visible flag
+                bool visible = ImGui::Begin(name.c_str(), nullptr, flags);
+                return std::make_tuple(visible, py::object(py::none()));
+            }
+            bool open = p_open.cast<bool>();
             bool visible = ImGui::Begin(name.c_str(), &open, flags);
-            return std::make_tuple(visible, open);
+            return std::make_tuple(visible, py::object(py::bool_(open)));
         },
         py::arg("name"),
-        py::arg("p_open") = true,
+        py::arg("p_open") = py::none(),
         py::arg("flags") = ImGuiWindowFlags_None
     );
 
@@ -182,15 +185,15 @@ void bind_imgui_core(py::module_& m) {
     m.def("push_item_width", &ImGui::PushItemWidth, py::arg("width"));
     m.def("pop_item_width", &ImGui::PopItemWidth);
     m.def("set_next_item_width", &ImGui::SetNextItemWidth, py::arg("width"));
-    m.def("indent", &ImGui::Indent, py::arg("indent_w"));
-    m.def("unindent", &ImGui::Unindent);
+    m.def("indent",   &ImGui::Indent,   py::arg("indent_w") = 0.0f);
+    m.def("unindent", &ImGui::Unindent, py::arg("indent_w") = 0.0f);
     m.def("begin_group", &ImGui::BeginGroup);
     m.def("end_group", &ImGui::EndGroup);    
 
     // ----- Layout / Spacing -----
     m.def("same_line", &ImGui::SameLine,
-        py::arg("x_offset") = 0.0f,
-        py::arg("spacing") = 0.0f
+        py::arg("offset_from_start_x") = 0.0f,
+        py::arg("spacing") = -1.0f
     );
 
     m.def("dummy", [](ImVec2 size) { ImGui::Dummy(size); },
@@ -314,39 +317,57 @@ void bind_imgui_core(py::module_& m) {
 
     // ----- Numeric inputs -----
     m.def("input_float",
-        [](const std::string& label, float value, float step, float step_fast, const std::string& format) {
+        [](const std::string& label, float value, float step, float step_fast,
+           const std::string& format, ImGuiInputTextFlags flags) {
             return wrap_scalar_input<float>(label, value,
-                [&](const char* l, float* v) { return ImGui::InputFloat(l, v, step, step_fast, format.c_str()); });
+                [&](const char* l, float* v) {
+                    return ImGui::InputFloat(l, v, step, step_fast, format.c_str(), flags);
+                });
         },
         py::arg("label"), py::arg("value"),
-        py::arg("step") = 0.0f, py::arg("step_fast") = 0.0f, py::arg("format") = "%.3f"
+        py::arg("step") = 0.0f, py::arg("step_fast") = 0.0f,
+        py::arg("format") = "%.3f",
+        py::arg("flags") = ImGuiInputTextFlags_None
     );
 
     m.def("input_int",
-        [](const std::string& label, int value, int step, int step_fast) {
+        [](const std::string& label, int value, int step, int step_fast,
+           ImGuiInputTextFlags flags) {
             return wrap_scalar_input<int>(label, value,
-                [&](const char* l, int* v) { return ImGui::InputInt(l, v, step, step_fast); });
+                [&](const char* l, int* v) {
+                    return ImGui::InputInt(l, v, step, step_fast, flags);
+                });
         },
         py::arg("label"), py::arg("value"),
-        py::arg("step") = 1, py::arg("step_fast") = 100
+        py::arg("step") = 1, py::arg("step_fast") = 100,
+        py::arg("flags") = ImGuiInputTextFlags_None
     );
 
     // ----- Sliders -----
     m.def("slider_float",
-        [](const std::string& label, float value, float min, float max, const std::string& format) {
+        [](const std::string& label, float value, float min, float max,
+           const std::string& format, ImGuiSliderFlags flags) {
             return wrap_scalar_input<float>(label, value,
-                [&](const char* l, float* v) { return ImGui::SliderFloat(l, v, min, max, format.c_str()); });
+                [&](const char* l, float* v) {
+                    return ImGui::SliderFloat(l, v, min, max, format.c_str(), flags);
+                });
         },
         py::arg("label"), py::arg("value"), py::arg("min"), py::arg("max"),
-        py::arg("format") = "%.3f"
+        py::arg("format") = "%.3f",
+        py::arg("flags") = ImGuiSliderFlags_None
     );
 
     m.def("slider_int",
-        [](const std::string& label, int value, int min, int max) {
+        [](const std::string& label, int value, int min, int max,
+           const std::string& format, ImGuiSliderFlags flags) {
             return wrap_scalar_input<int>(label, value,
-                [&](const char* l, int* v) { return ImGui::SliderInt(l, v, min, max); });
+                [&](const char* l, int* v) {
+                    return ImGui::SliderInt(l, v, min, max, format.c_str(), flags);
+                });
         },
-        py::arg("label"), py::arg("value"), py::arg("min"), py::arg("max")
+        py::arg("label"), py::arg("value"), py::arg("min"), py::arg("max"),
+        py::arg("format") = "%d",
+        py::arg("flags") = ImGuiSliderFlags_None
     );
 
     // ----- Drag floats -----
@@ -446,13 +467,14 @@ void bind_imgui_core(py::module_& m) {
 
     // ----- Colors -----
     m.def("color_edit3",
-        [](const std::string& label, const ImVec4& color) {
+        [](const std::string& label, const ImVec4& color, ImGuiColorEditFlags flags) {
             float col[3]; vec4_to_float3(color, col);
-            bool changed = ImGui::ColorEdit3(label.c_str(), col);
-            ImVec4 out = float3_to_vec4(col, color.w); // keep original alpha
+            bool changed = ImGui::ColorEdit3(label.c_str(), col, flags);
+            ImVec4 out = float3_to_vec4(col, color.w); // preserve original alpha
             return std::make_tuple(changed, out);
         },
-        py::arg("label"), py::arg("color")
+        py::arg("label"), py::arg("color"),
+        py::arg("flags") = ImGuiColorEditFlags_None
     );
 
     m.def("color_edit4",
@@ -497,11 +519,16 @@ void bind_imgui_core(py::module_& m) {
     );
 
     m.def("image",
-        [](ImTextureID texture_id, float width, float height, ImVec2 uv0, ImVec2 uv1) {
-            ImGui::Image(texture_id, ImVec2(width, height), uv0, uv1);
+        [](ImTextureID texture_id, const ImVec2& image_size,
+           const ImVec2& uv0, const ImVec2& uv1,
+           const ImVec4& tint_col, const ImVec4& border_col) {
+            ImGui::Image(texture_id, image_size, uv0, uv1, tint_col, border_col);
         },
-        py::arg("texture_id"), py::arg("width"), py::arg("height"),
-        py::arg("uv0"), py::arg("uv1")
+        py::arg("texture_id"), py::arg("image_size"),
+        py::arg("uv0")        = ImVec2(0.0f, 0.0f),
+        py::arg("uv1")        = ImVec2(1.0f, 1.0f),
+        py::arg("tint_col")   = ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+        py::arg("border_col") = ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
     );
 
     m.def("calc_text_size",
@@ -519,17 +546,41 @@ void bind_imgui_core(py::module_& m) {
     );
 
     // ----- Fonts / Glyph ranges -----
-    m.def("get_glyph_ranges_default", &ImFontAtlas::GetGlyphRangesDefault, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_greek", &ImFontAtlas::GetGlyphRangesGreek, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_korean", &ImFontAtlas::GetGlyphRangesKorean, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_japanese", &ImFontAtlas::GetGlyphRangesJapanese, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_chinese_full", &ImFontAtlas::GetGlyphRangesChineseFull, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_chinese_simplified_common", &ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_cyrillic", &ImFontAtlas::GetGlyphRangesCyrillic, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_thai", &ImFontAtlas::GetGlyphRangesThai, py::return_value_policy::reference);
-    m.def("get_glyph_ranges_vietnamese", &ImFontAtlas::GetGlyphRangesVietnamese, py::return_value_policy::reference);
+    // Glyph range helpers: route through the current context's font atlas so they
+    // work as zero-argument free functions from Python.  The returned ImWchar*
+    // pointer is owned by the atlas and remains valid for the lifetime of the context.
+    m.def("get_glyph_ranges_default",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesDefault(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_greek",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesGreek(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_korean",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesKorean(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_japanese",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesJapanese(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_chinese_full",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesChineseFull(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_chinese_simplified_common",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_cyrillic",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesCyrillic(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_thai",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesThai(); },
+        py::return_value_policy::reference);
+    m.def("get_glyph_ranges_vietnamese",
+        []() { return ImGui::GetIO().Fonts->GetGlyphRangesVietnamese(); },
+        py::return_value_policy::reference);
 
-    m.def("push_font", &ImGui::PushFont);
+    m.def("push_font",
+        [](ImFont* font) { ImGui::PushFont(font); },
+        py::arg("font")
+    );
     m.def("pop_font", &ImGui::PopFont);
 
     // ----- Tables -----
@@ -584,16 +635,19 @@ void bind_imgui_core(py::module_& m) {
             ImGuiTableSortSpecs* specs = ImGui::TableGetSortSpecs();
             if (!specs || specs->SpecsCount == 0)
                 return std::vector<std::tuple<int,int,int>>{};
-            
+
             std::vector<std::tuple<int,int,int>> out;
             out.reserve(specs->SpecsCount);
             for (int i = 0; i < specs->SpecsCount; i++) {
                 const ImGuiTableColumnSortSpecs& s = specs->Specs[i];
-                out.emplace_back(s.ColumnIndex, s.SortOrder, (int)s.SortDirection);
+                out.emplace_back(s.ColumnIndex, s.SortOrder, static_cast<int>(s.SortDirection));
             }
+            // Must clear the dirty flag after reading; otherwise ImGui re-sorts every frame.
+            specs->SpecsDirty = false;
             return out;
         },
-        "Return current table sort specifications as a list of (column_index, sort_order, sort_direction) tuples."
+        "Return current table sort specs as a list of (column_index, sort_order, sort_direction) tuples, "
+        "then clear the dirty flag.  Only call when TableGetSortSpecs() is non-null."
     );
 
     m.def("table_get_column_count", &ImGui::TableGetColumnCount);
@@ -690,10 +744,18 @@ void bind_imgui_core(py::module_& m) {
     );
 
     m.def("begin_popup_modal",
-        [](const std::string& name, bool* p_open, ImGuiWindowFlags flags) {
-            return ImGui::BeginPopupModal(name.c_str(), p_open, flags);
+        [](const std::string& name, py::object p_open, ImGuiWindowFlags flags) {
+            if (p_open.is_none()) {
+                bool visible = ImGui::BeginPopupModal(name.c_str(), nullptr, flags);
+                return std::make_tuple(visible, py::object(py::none()));
+            }
+            bool open = p_open.cast<bool>();
+            bool visible = ImGui::BeginPopupModal(name.c_str(), &open, flags);
+            return std::make_tuple(visible, py::object(py::bool_(open)));
         },
-        py::arg("name"), py::arg("p_open") = nullptr, py::arg("flags") = ImGuiWindowFlags_None
+        py::arg("name"),
+        py::arg("p_open") = py::none(),
+        py::arg("flags") = ImGuiWindowFlags_None
     );
 
     m.def("end_popup", &ImGui::EndPopup);
@@ -745,8 +807,8 @@ void bind_imgui_core(py::module_& m) {
     m.def("is_item_active", &ImGui::IsItemActive);
     m.def("is_item_focused", &ImGui::IsItemFocused);
     m.def("is_item_clicked",
-        [](int mouse_button) { return ImGui::IsItemClicked(mouse_button); },
-        py::arg("mouse_button") = 0
+        [](ImGuiMouseButton mouse_button) { return ImGui::IsItemClicked(mouse_button); },
+        py::arg("mouse_button") = ImGuiMouseButton_Left
     );
     m.def("is_item_visible", &ImGui::IsItemVisible);
     m.def("is_item_edited", &ImGui::IsItemEdited);
@@ -774,20 +836,20 @@ void bind_imgui_core(py::module_& m) {
 
     // Mouse
     m.def("is_mouse_down",
-        [](int button) { return ImGui::IsMouseDown(button); },
-        py::arg("button") = 0
+        [](ImGuiMouseButton button) { return ImGui::IsMouseDown(button); },
+        py::arg("button") = ImGuiMouseButton_Left
     );
     m.def("is_mouse_clicked",
-        [](int button, bool repeat) { return ImGui::IsMouseClicked(button, repeat); },
-        py::arg("button") = 0, py::arg("repeat") = false
+        [](ImGuiMouseButton button, bool repeat) { return ImGui::IsMouseClicked(button, repeat); },
+        py::arg("button") = ImGuiMouseButton_Left, py::arg("repeat") = false
     );
     m.def("is_mouse_released",
-        [](int button) { return ImGui::IsMouseReleased(button); },
-        py::arg("button") = 0
+        [](ImGuiMouseButton button) { return ImGui::IsMouseReleased(button); },
+        py::arg("button") = ImGuiMouseButton_Left
     );
     m.def("is_mouse_double_clicked",
-        [](int button) { return ImGui::IsMouseDoubleClicked(button); },
-        py::arg("button") = 0
+        [](ImGuiMouseButton button) { return ImGui::IsMouseDoubleClicked(button); },
+        py::arg("button") = ImGuiMouseButton_Left
     );
     m.def("get_mouse_pos",
         []() { ImVec2 v = ImGui::GetMousePos(); return std::make_tuple(v.x, v.y); }
@@ -800,15 +862,15 @@ void bind_imgui_core(py::module_& m) {
         }
     );
     m.def("get_mouse_drag_delta",
-        [](int button, float lock_threshold) {
+        [](ImGuiMouseButton button, float lock_threshold) {
             ImVec2 v = ImGui::GetMouseDragDelta(button, lock_threshold);
             return std::make_tuple(v.x, v.y);
         },
-        py::arg("button") = 0, py::arg("lock_threshold") = -1.0f
+        py::arg("button") = ImGuiMouseButton_Left, py::arg("lock_threshold") = -1.0f
     );
     m.def("reset_mouse_drag_delta",
-        [](int button) { ImGui::ResetMouseDragDelta(button); },
-        py::arg("button") = 0
+        [](ImGuiMouseButton button) { ImGui::ResetMouseDragDelta(button); },
+        py::arg("button") = ImGuiMouseButton_Left
     );
     m.def("is_mouse_hovering_rect",
         [](const ImVec2& min, const ImVec2& max, bool clip) {
@@ -817,11 +879,14 @@ void bind_imgui_core(py::module_& m) {
         py::arg("min"), py::arg("max"), py::arg("clip") = true
     );
     m.def("is_mouse_pos_valid",
-        [](const std::tuple<float,float>& pos) {
-            ImVec2 v(std::get<0>(pos), std::get<1>(pos));
+        [](py::object pos) {
+            if (pos.is_none())
+                return ImGui::IsMousePosValid(nullptr);
+            auto t = pos.cast<std::tuple<float,float>>();
+            ImVec2 v(std::get<0>(t), std::get<1>(t));
             return ImGui::IsMousePosValid(&v);
         },
-        py::arg("pos") = std::make_tuple(0.0f, 0.0f)
+        py::arg("pos") = py::none()
     );
 
     // Keyboard (use ImGuiKey with explicit cast)

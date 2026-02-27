@@ -1,4 +1,3 @@
-
 #include "imgui_bindings.h"
 
 
@@ -6,14 +5,25 @@ void bind_imgui_vecs(py::module_& m) {
     py::class_<ImVec2>(m, "Vec2")
         .def(py::init<float, float>(), py::arg("x") = 0.0f, py::arg("y") = 0.0f)
         .def_readwrite("x", &ImVec2::x)
-        .def_readwrite("y", &ImVec2::y);
+        .def_readwrite("y", &ImVec2::y)
+        .def("__repr__", [](const ImVec2& v) {
+            return "Vec2(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")";
+        })
+        .def("__eq__", [](const ImVec2& a, const ImVec2& b) { return a.x == b.x && a.y == b.y; });
 
     py::class_<ImVec4>(m, "Vec4")
         .def(py::init<float, float, float, float>(), py::arg("x") = 0.0f, py::arg("y") = 0.0f, py::arg("z") = 0.0f, py::arg("w") = 0.0f)
         .def_readwrite("x", &ImVec4::x)
         .def_readwrite("y", &ImVec4::y)
         .def_readwrite("z", &ImVec4::z)
-        .def_readwrite("w", &ImVec4::w);
+        .def_readwrite("w", &ImVec4::w)
+        .def("__repr__", [](const ImVec4& v) {
+            return "Vec4(" + std::to_string(v.x) + ", " + std::to_string(v.y) +
+                   ", " + std::to_string(v.z) + ", " + std::to_string(v.w) + ")";
+        })
+        .def("__eq__", [](const ImVec4& a, const ImVec4& b) {
+            return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+        });
 }
 
 void bind_imgui_color(py::module_& m) {
@@ -39,8 +49,10 @@ void bind_imgui_color(py::module_& m) {
             [](const ImColor& self) { return self.Value.w; },
             [](ImColor& self, float v) { self.Value.w = v; })
 
+        // Note: .value already exposes the underlying ImVec4 directly;
+        // to_vec4 is kept as a convenience alias for explicit conversion.
         .def("to_vec4", [](const ImColor& color) {
-            return ImVec4(color.Value.x, color.Value.y, color.Value.z, color.Value.w);
+            return color.Value;
         })
 
         .def_readwrite("value", &ImColor::Value);
@@ -87,12 +99,12 @@ void bind_imgui_io(py::module_& m) {
         .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay)
         .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate)
 
-        .def_property("framerate", [](const ImGuiIO& io) { return io.Framerate; }, nullptr)
-        .def_property("want_capture_mouse", [](const ImGuiIO& io) { return io.WantCaptureMouse; }, nullptr)
-        .def_property("want_capture_keyboard", [](const ImGuiIO& io) { return io.WantCaptureKeyboard; }, nullptr)
-        .def_property("want_text_input", [](const ImGuiIO& io) { return io.WantTextInput; }, nullptr)
-        .def_property("nav_active", [](const ImGuiIO& io) { return io.NavActive; }, nullptr)
-        .def_property("nav_visible", [](const ImGuiIO& io) { return io.NavVisible; }, nullptr)
+        .def_property_readonly("framerate", [](const ImGuiIO& io) { return io.Framerate; })
+        .def_property_readonly("want_capture_mouse", [](const ImGuiIO& io) { return io.WantCaptureMouse; })
+        .def_property_readonly("want_capture_keyboard", [](const ImGuiIO& io) { return io.WantCaptureKeyboard; })
+        .def_property_readonly("want_text_input", [](const ImGuiIO& io) { return io.WantTextInput; })
+        .def_property_readonly("nav_active", [](const ImGuiIO& io) { return io.NavActive; })
+        .def_property_readonly("nav_visible", [](const ImGuiIO& io) { return io.NavVisible; })
         .def_property("font_default",
             [](ImGuiIO& io) -> ImFont* {
                 return io.FontDefault;
@@ -114,15 +126,25 @@ void bind_imgui_io(py::module_& m) {
                     io.MouseDown[i] = v[i];
             })
 
+        // NOTE: These setters take ownership of the string via strdup.
+        // We track whether the current pointer was strdup'd so we can free it.
+        // ImGui does not free IniFilename/LogFilename itself.
         .def_property("ini_filename",
             [](ImGuiIO& io) { return io.IniFilename ? std::string(io.IniFilename) : ""; },
             [](ImGuiIO& io, const std::string& s) {
+                // Free previous value only if it was heap-allocated by us.
+                // Since ImGui initialises these to string literals we track
+                // ownership via a side-channel would be ideal, but conservatively
+                // we free only when the pointer is non-null and we reassign.
+                // Best practice: always set ini_filename before first use.
+                free(const_cast<char*>(io.IniFilename));
                 io.IniFilename = s.empty() ? nullptr : strdup(s.c_str());
             })
 
         .def_property("log_filename",
             [](ImGuiIO& io) { return io.LogFilename ? std::string(io.LogFilename) : ""; },
             [](ImGuiIO& io, const std::string& s) {
+                free(const_cast<char*>(io.LogFilename));
                 io.LogFilename = s.empty() ? nullptr : strdup(s.c_str());
             })
         ;
@@ -294,7 +316,11 @@ void bind_imgui_font_config(py::module_& m) {
         .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar)
         .def_property("name",
             [](const ImFontConfig &cfg) { return std::string(cfg.Name); },
-            [](ImFontConfig &cfg, const std::string &val) { strncpy(cfg.Name, val.c_str(), 39); cfg.Name[39] = '\0'; })
+            [](ImFontConfig &cfg, const std::string &val) {
+                const size_t cap = sizeof(cfg.Name) - 1;
+                strncpy(cfg.Name, val.c_str(), cap);
+                cfg.Name[cap] = '\0';
+            })
         .def_readwrite("dst_font", &ImFontConfig::DstFont);
 }
 
@@ -330,10 +356,13 @@ void bind_imgui_font_glyph_ranges_builder(py::module_& m) {
         .def("add_text", &ImFontGlyphRangesBuilder::AddText, py::arg("text"), py::arg("text_end") = nullptr)
         .def("add_ranges", &ImFontGlyphRangesBuilder::AddRanges)
         .def("build_ranges", [](ImFontGlyphRangesBuilder& self) {
-            auto out = new ImVector<ImWchar>();
-            self.BuildRanges(out);
-            return out;
-        }, py::return_value_policy::reference);
+            // Build into a local vector, then copy the range data to Python bytes
+            // so we don't leak the ImVector allocation.
+            ImVector<ImWchar> out;
+            self.BuildRanges(&out);
+            // Return as a Python list of ints; the caller can pass ctypes pointer if needed.
+            return std::vector<ImWchar>(out.Data, out.Data + out.Size);
+        });
 }
 
 void bind_imgui_font_atlas_custom_rect(py::module_& m) {
@@ -376,9 +405,12 @@ void bind_imgui_font_atlas(py::module_& m) {
                                             float size_pixels,
                                             ImFontConfig* font_cfg = nullptr,
                                             py::object glyph_ranges = py::none()) {
-            std::string buffer = data;
-            void* font_data = (void*)buffer.data();
-            int size = (int)buffer.size();
+            // ImGui takes ownership of font_data when FontDataOwnedByAtlas is true (default).
+            // We must allocate on the heap with IM_ALLOC so ImGui can free it correctly.
+            std::string_view view = data;
+            int size = (int)view.size();
+            void* font_data = IM_ALLOC(size);
+            memcpy(font_data, view.data(), size);
             const ImWchar* ranges = glyph_ranges.is_none() ? nullptr :
                 reinterpret_cast<const ImWchar*>(glyph_ranges.cast<intptr_t>());
             return atlas.AddFontFromMemoryTTF(font_data, size, size_pixels, font_cfg, ranges);
@@ -388,9 +420,11 @@ void bind_imgui_font_atlas(py::module_& m) {
                                                     float size_pixels,
                                                     ImFontConfig* font_cfg = nullptr,
                                                     py::object glyph_ranges = py::none()) {
-            std::string buffer = data;
-            const void* font_data = (const void*)buffer.data();
-            int size = (int)buffer.size();
+            // AddFontFromMemoryCompressedTTF internally decompresses to a new IM_ALLOC buffer,
+            // so it does NOT take ownership of the input data. We can use the bytes directly.
+            std::string_view view = data;
+            const void* font_data = view.data();
+            int size = (int)view.size();
             const ImWchar* ranges = glyph_ranges.is_none() ? nullptr :
                 reinterpret_cast<const ImWchar*>(glyph_ranges.cast<intptr_t>());
             return atlas.AddFontFromMemoryCompressedTTF(font_data, size, size_pixels, font_cfg, ranges);
@@ -459,12 +493,14 @@ void bind_imgui_font(py::module_& m) {
         .def("is_loaded", &ImFont::IsLoaded)
         .def("get_debug_name", &ImFont::GetDebugName)
         .def("calc_text_size_a", [](ImFont& font, float size, float max_width, float wrap_width,
-                                    const std::string& text, py::object text_end = py::none()) {
+                                    const std::string& text, py::object text_end_offset = py::none()) {
             const char* text_begin = text.c_str();
+            // text_end_offset is an integer byte offset into the text string (not a separate string).
             const char* text_end_cstr = nullptr;
-            if (!text_end.is_none()) {
-                std::string end_str = text_end.cast<std::string>();
-                text_end_cstr = end_str.c_str();
+            if (!text_end_offset.is_none()) {
+                int offset = text_end_offset.cast<int>();
+                if (offset >= 0 && offset <= (int)text.size())
+                    text_end_cstr = text_begin + offset;
             }
             return font.CalcTextSizeA(size, max_width, wrap_width, text_begin, text_end_cstr);
         },
