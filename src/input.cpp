@@ -92,6 +92,10 @@ void bind_actions(py::module_& m) {
     m.attr("REPEAT") = GLFW_REPEAT;
 }
 
+void bind_scancodes(py::module_& m) {
+    m.attr("KEY_UNKNOWN") = GLFW_KEY_UNKNOWN;
+}
+
 void bind_keys(py::module_& m) {
     EXPORT_KEY(SPACE);
     EXPORT_KEY(APOSTROPHE);

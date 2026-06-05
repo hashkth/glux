@@ -51,3 +51,4 @@ void bind_keys(py::module_& m);
 void bind_buttons(py::module_& m);
 void bind_actions(py::module_& m);
 void bind_mods(py::module_& m);
+void bind_scancodes(py::module_& m);

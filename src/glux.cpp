@@ -22,7 +22,7 @@ PYBIND11_MODULE(glux, m) {
     bind_buttons(buttons);
     bind_actions(actions);
     bind_mods(mods);
-    scancodes.attr("KEY_UNKNOWN") = GLFW_KEY_UNKNOWN;
+    bind_scancodes(scancodes);
 
     // ImGui Bindings
     py::module_ imgui = m.def_submodule("imgui", "Dear ImGui bindings");
@@ -80,5 +80,5 @@ PYBIND11_MODULE(glux, m) {
     bind_imgui_font(imgui);
 
     // Function Bindings
-    bind_imgui_core(imgui);
+    bind_imgui_funcs(imgui);
 }

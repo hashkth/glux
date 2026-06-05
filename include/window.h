@@ -54,7 +54,7 @@ public:
     void set_icon(int width, int height, const unsigned char* pixels);
     void close();
 
-    std::vector<unsigned char> screenshot(bool flip_vertically = true) const;
+    std::vector<unsigned char> screenshot() const;
 
     enum class CursorMode { Normal, Hidden, Disabled };
     void set_cursor_visible(bool visible);

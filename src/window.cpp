@@ -1,6 +1,8 @@
 #include "window.h"
 #include "input.h"
 
+// Global window pointer
+// Multiple windows are NOT supported yet
 Window* g_window = nullptr;
 
 Window::Window(int width, int height, const std::string& title,
@@ -79,10 +81,12 @@ void Window::cleanup() {
 
 void Window::run() {
     while (!glfwWindowShouldClose(window_)) {
+        // Program loop
         if (events_fn_) events_fn_();
         if (process_fn_) process_fn_();
         if (render_fn_) render_fn_();
 
+        // Imgui renders at last
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -93,6 +97,7 @@ void Window::run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window_);
 
+        // Reset inputs
         keyboard.scancode = -1; 
         keyboard.action = -1; 
         keyboard.mods = 0; 
@@ -105,7 +110,6 @@ void Window::run() {
 
         glfwPollEvents();
     }
-
     cleanup();
 }
 
@@ -266,7 +270,7 @@ void Window::set_icon(int width, int height, const unsigned char* pixels) {
     glfwSetWindowIcon(window_, 1, &img);
 }
 
-std::vector<unsigned char> Window::screenshot(bool flip_vertically) const {
+std::vector<unsigned char> Window::screenshot() const {
     if (!window_) return {};
 
     int fb_width, fb_height;
@@ -275,16 +279,15 @@ std::vector<unsigned char> Window::screenshot(bool flip_vertically) const {
     std::vector<unsigned char> pixels(fb_width * fb_height * 4);
     glReadPixels(0, 0, fb_width, fb_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 
-    if (flip_vertically) {
-        int row_bytes = fb_width * 4;
-        std::vector<unsigned char> tmp(row_bytes);
-        for (int y = 0; y < fb_height / 2; ++y) {
-            unsigned char* top = pixels.data() + y * row_bytes;
-            unsigned char* bottom = pixels.data() + (fb_height - 1 - y) * row_bytes;
-            std::memcpy(tmp.data(), top, row_bytes);
-            std::memcpy(top, bottom, row_bytes);
-            std::memcpy(bottom, tmp.data(), row_bytes);
-        }
+    // Flip image vertically to correct orientation
+    int row_bytes = fb_width * 4;
+    std::vector<unsigned char> tmp(row_bytes);
+    for (int y = 0; y < fb_height / 2; ++y) {
+        unsigned char* top = pixels.data() + y * row_bytes;
+        unsigned char* bottom = pixels.data() + (fb_height - 1 - y) * row_bytes;
+        std::memcpy(tmp.data(), top, row_bytes);
+        std::memcpy(top, bottom, row_bytes);
+        std::memcpy(bottom, tmp.data(), row_bytes);
     }
     return pixels;
 }
@@ -311,10 +314,10 @@ void bind_window(py::module_ &m)
         .def("is_vsync", &Window::is_vsync)
         .def("is_fullscreen", &Window::is_fullscreen)
         .def("should_close", &Window::should_close)
-        .def("screenshot", [](Window &w, bool flip_vertically) {
-            auto vec = w.screenshot(flip_vertically);
+        .def("screenshot", [](Window &w) {
+            auto vec = w.screenshot();
             return py::bytes(reinterpret_cast<const char*>(vec.data()), vec.size());
-        }, py::arg("flip_vertically")=true)
+        })
 
         .def("set_size", &Window::set_size)
         .def("set_title", &Window::set_title)

@@ -9,6 +9,7 @@
 
 namespace py = pybind11;
 
+// Flag bindings
 void bind_imgui_window_flags(py::module_& m);
 void bind_imgui_child_flags(py::module_& m);
 void bind_imgui_item_flags(py::module_& m);
@@ -46,6 +47,7 @@ void bind_imgui_cond(py::module_& m);
 void bind_imgui_table_bg_target(py::module_& m);
 void bind_imgui_selection_request_type(py::module_& m);
 
+// Struct bindings
 void bind_imgui_vecs(py::module_& m);
 void bind_imgui_color(py::module_& m);
 void bind_imgui_io(py::module_& m);
@@ -59,4 +61,5 @@ void bind_imgui_font_atlas_custom_rect(py::module_& m);
 void bind_imgui_font_atlas(py::module_& m);
 void bind_imgui_font(py::module_& m);
 
-void bind_imgui_core(py::module_& m);
+// Function bindings
+void bind_imgui_funcs(py::module_& m);

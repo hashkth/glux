@@ -118,11 +118,7 @@ static inline auto do_input_text_multiline(const std::string& label,
     return std::make_tuple(changed, buffer);
 }
 
-// ----------------------
-// Bindings
-// ----------------------
-
-void bind_imgui_core(py::module_& m) {
+void bind_imgui_funcs(py::module_& m) {
     // ----- Core windowing -----
 
     m.def("begin",
