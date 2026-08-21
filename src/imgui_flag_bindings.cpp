@@ -71,7 +71,7 @@ void bind_imgui_window_flags(py::module_& m) {
         ENUM_IMGUI_WINDOW_FLAGS(NoNav)
         ENUM_IMGUI_WINDOW_FLAGS(NoDecoration)
         ENUM_IMGUI_WINDOW_FLAGS(NoInputs)
-        .export_values();
+        ;
 }
 
 void bind_imgui_child_flags(py::module_& m) {
@@ -85,7 +85,7 @@ void bind_imgui_child_flags(py::module_& m) {
         ENUM_IMGUI_CHILD_FLAGS(AutoResizeY)
         ENUM_IMGUI_CHILD_FLAGS(AlwaysAutoResize)
         ENUM_IMGUI_CHILD_FLAGS(FrameStyle)
-        .export_values();
+        ;
 }
 
 void bind_imgui_item_flags(py::module_& m) {
@@ -97,7 +97,7 @@ void bind_imgui_item_flags(py::module_& m) {
         ENUM_IMGUI_ITEM_FLAGS(ButtonRepeat)
         ENUM_IMGUI_ITEM_FLAGS(AutoClosePopups)
         ENUM_IMGUI_ITEM_FLAGS(AllowDuplicateId)
-        .export_values();
+        ;
 }
 
 void bind_imgui_input_text_flags(py::module_& m) {
@@ -127,7 +127,7 @@ void bind_imgui_input_text_flags(py::module_& m) {
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CallbackCharFilter)
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CallbackResize)
         ENUM_IMGUI_INPUT_TEXT_FLAGS(CallbackEdit)
-        .export_values();
+        ;
 }
 
 void bind_imgui_tree_node_flags(py::module_& m) {
@@ -151,7 +151,7 @@ void bind_imgui_tree_node_flags(py::module_& m) {
         ENUM_IMGUI_TREE_NODE_FLAGS(LabelSpanAllColumns)
         ENUM_IMGUI_TREE_NODE_FLAGS(NavLeftJumpsToParent)
         ENUM_IMGUI_TREE_NODE_FLAGS(CollapsingHeader)
-        .export_values();
+        ;
 }
 
 void bind_imgui_popup_flags(py::module_& m) {
@@ -168,7 +168,7 @@ void bind_imgui_popup_flags(py::module_& m) {
         ENUM_IMGUI_POPUP_FLAGS(AnyPopupId)
         ENUM_IMGUI_POPUP_FLAGS(AnyPopupLevel)
         ENUM_IMGUI_POPUP_FLAGS(AnyPopup)
-        .export_values();
+        ;
 }
 
 void bind_imgui_selectable_flags(py::module_& m) {
@@ -180,7 +180,7 @@ void bind_imgui_selectable_flags(py::module_& m) {
         ENUM_IMGUI_SELECTABLE_FLAGS(Disabled)
         ENUM_IMGUI_SELECTABLE_FLAGS(AllowOverlap)
         ENUM_IMGUI_SELECTABLE_FLAGS(Highlight)
-        .export_values();
+        ;
 }
 
 void bind_imgui_combo_flags(py::module_& m) {
@@ -195,7 +195,7 @@ void bind_imgui_combo_flags(py::module_& m) {
         ENUM_IMGUI_COMBO_FLAGS(NoPreview)
         ENUM_IMGUI_COMBO_FLAGS(WidthFitPreview)
         ENUM_IMGUI_COMBO_FLAGS(HeightMask_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_tab_bar_flags(py::module_& m) {
@@ -212,7 +212,7 @@ void bind_imgui_tab_bar_flags(py::module_& m) {
         ENUM_IMGUI_TAB_BAR_FLAGS(FittingPolicyScroll)
         ENUM_IMGUI_TAB_BAR_FLAGS(FittingPolicyMask_)
         ENUM_IMGUI_TAB_BAR_FLAGS(FittingPolicyDefault_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_tab_item_flags(py::module_& m) {
@@ -227,7 +227,7 @@ void bind_imgui_tab_item_flags(py::module_& m) {
         ENUM_IMGUI_TAB_ITEM_FLAGS(Leading)
         ENUM_IMGUI_TAB_ITEM_FLAGS(Trailing)
         ENUM_IMGUI_TAB_ITEM_FLAGS(NoAssumedClosure)
-        .export_values();
+        ;
 }
 
 void bind_imgui_focused_flags(py::module_& m) {
@@ -238,7 +238,7 @@ void bind_imgui_focused_flags(py::module_& m) {
         ENUM_IMGUI_FOCUSED_FLAGS(AnyWindow)
         ENUM_IMGUI_FOCUSED_FLAGS(NoPopupHierarchy)
         ENUM_IMGUI_FOCUSED_FLAGS(RootAndChildWindows)
-        .export_values();
+        ;
 }
 
 void bind_imgui_hovered_flags(py::module_& m) {
@@ -263,7 +263,7 @@ void bind_imgui_hovered_flags(py::module_& m) {
         ENUM_IMGUI_HOVERED_FLAGS(DelayShort)
         ENUM_IMGUI_HOVERED_FLAGS(DelayNormal)
         ENUM_IMGUI_HOVERED_FLAGS(NoSharedDelay)
-        .export_values();
+        ;
 }
 
 void bind_imgui_drag_drop_flags(py::module_& m) {
@@ -281,7 +281,7 @@ void bind_imgui_drag_drop_flags(py::module_& m) {
         ENUM_IMGUI_DRAG_DROP_FLAGS(AcceptNoDrawDefaultRect)
         ENUM_IMGUI_DRAG_DROP_FLAGS(AcceptNoPreviewTooltip)
         ENUM_IMGUI_DRAG_DROP_FLAGS(AcceptPeekOnly)
-        .export_values();
+        ;
 }
 
 void bind_imgui_data_type(py::module_& m) {
@@ -300,7 +300,7 @@ void bind_imgui_data_type(py::module_& m) {
         ENUM_IMGUI_DATA_TYPE(Double)
         ENUM_IMGUI_DATA_TYPE(Bool)
         ENUM_IMGUI_DATA_TYPE(String)
-        .export_values();
+        ;
 }
 
 void bind_imgui_dir(py::module_& m) {
@@ -311,7 +311,7 @@ void bind_imgui_dir(py::module_& m) {
         ENUM_IMGUI_DIR(Right)
         ENUM_IMGUI_DIR(Up)
         ENUM_IMGUI_DIR(Down)
-        .export_values();
+        ;
 }
 
 void bind_imgui_sort_direction(py::module_& m) {
@@ -320,7 +320,7 @@ void bind_imgui_sort_direction(py::module_& m) {
         .value("None_", ImGuiSortDirection_None)
         ENUM_IMGUI_SORT_DIRECTION(Ascending)
         ENUM_IMGUI_SORT_DIRECTION(Descending)
-        .export_values();
+        ;
 }
 
 void bind_imgui_key(py::module_& m) {
@@ -483,7 +483,7 @@ void bind_imgui_key(py::module_& m) {
         ENUM_IMGUI_KEY_MOD(Alt)
         ENUM_IMGUI_KEY_MOD(Super)
         ENUM_IMGUI_KEY_MOD(Mask_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_input_flags(py::module_& m) {
@@ -499,7 +499,7 @@ void bind_imgui_input_flags(py::module_& m) {
         ENUM_IMGUI_INPUT_FLAGS(RouteUnlessBgFocused)
         ENUM_IMGUI_INPUT_FLAGS(RouteFromRootWindow)
         ENUM_IMGUI_INPUT_FLAGS(Tooltip)
-        .export_values();
+        ;
 }
 
 void bind_imgui_config_flags(py::module_& m) {
@@ -510,7 +510,7 @@ void bind_imgui_config_flags(py::module_& m) {
         ENUM_IMGUI_CONFIG_FLAGS(NoMouse)
         ENUM_IMGUI_CONFIG_FLAGS(NoMouseCursorChange)
         ENUM_IMGUI_CONFIG_FLAGS(NoKeyboard)
-        .export_values();
+        ;
 }
 
 void bind_imgui_col(py::module_& m) {
@@ -574,7 +574,7 @@ void bind_imgui_col(py::module_& m) {
         ENUM_IMGUI_COL(NavWindowingHighlight)
         ENUM_IMGUI_COL(NavWindowingDimBg)
         ENUM_IMGUI_COL(ModalWindowDimBg)
-        .export_values();
+        ;
 }
 
 void bind_imgui_style_var(py::module_& m) {
@@ -616,7 +616,7 @@ void bind_imgui_style_var(py::module_& m) {
         ENUM_IMGUI_STYLE_VAR(SeparatorTextBorderSize)
         ENUM_IMGUI_STYLE_VAR(SeparatorTextAlign)
         ENUM_IMGUI_STYLE_VAR(SeparatorTextPadding)
-        .export_values();
+        ;
 }
 
 void bind_imgui_button_flags(py::module_& m) {
@@ -627,7 +627,7 @@ void bind_imgui_button_flags(py::module_& m) {
         ENUM_IMGUI_BUTTON_FLAGS(MouseButtonMiddle)
         ENUM_IMGUI_BUTTON_FLAGS(MouseButtonMask_)
         ENUM_IMGUI_BUTTON_FLAGS(EnableNav)
-        .export_values();
+        ;
 }
 
 void bind_imgui_color_edit_flags(py::module_& m) {
@@ -663,7 +663,7 @@ void bind_imgui_color_edit_flags(py::module_& m) {
         ENUM_IMGUI_COLOR_EDIT_FLAGS(DataTypeMask_)
         ENUM_IMGUI_COLOR_EDIT_FLAGS(PickerMask_)
         ENUM_IMGUI_COLOR_EDIT_FLAGS(InputMask_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_slider_flags(py::module_& m) {
@@ -678,7 +678,7 @@ void bind_imgui_slider_flags(py::module_& m) {
         ENUM_IMGUI_SLIDER_FLAGS(NoSpeedTweaks)
         ENUM_IMGUI_SLIDER_FLAGS(AlwaysClamp)
         ENUM_IMGUI_SLIDER_FLAGS(InvalidMask_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_mouse_button(py::module_& m) {
@@ -688,7 +688,7 @@ void bind_imgui_mouse_button(py::module_& m) {
         ENUM_IMGUI_MOUSE_BUTTON(Left)
         ENUM_IMGUI_MOUSE_BUTTON(Right)
         ENUM_IMGUI_MOUSE_BUTTON(Middle)
-        .export_values();
+        ;
 }
 
 void bind_imgui_mouse_cursor(py::module_& m) {
@@ -707,7 +707,7 @@ void bind_imgui_mouse_cursor(py::module_& m) {
         ENUM_IMGUI_MOUSE_CURSOR(Wait)
         ENUM_IMGUI_MOUSE_CURSOR(Progress)
         ENUM_IMGUI_MOUSE_CURSOR(NotAllowed)
-        .export_values();
+        ;
 }
 
 void bind_imgui_cond(py::module_& m) {
@@ -719,7 +719,7 @@ void bind_imgui_cond(py::module_& m) {
         ENUM_IMGUI_COND(Once)
         ENUM_IMGUI_COND(FirstUseEver)
         ENUM_IMGUI_COND(Appearing)
-        .export_values();
+        ;
 }
 
 void bind_imgui_table_flags(py::module_& m) {
@@ -760,7 +760,7 @@ void bind_imgui_table_flags(py::module_& m) {
         ENUM_IMGUI_TABLE_FLAGS(SortMulti)
         ENUM_IMGUI_TABLE_FLAGS(SortTristate)
         ENUM_IMGUI_TABLE_FLAGS(HighlightHoveredColumn)
-        .export_values();
+        ;
 }
 
 void bind_imgui_table_column_flags(py::module_& m) {
@@ -789,14 +789,14 @@ void bind_imgui_table_column_flags(py::module_& m) {
         ENUM_IMGUI_TABLE_COLUMN_FLAGS(IsVisible)
         ENUM_IMGUI_TABLE_COLUMN_FLAGS(IsSorted)
         ENUM_IMGUI_TABLE_COLUMN_FLAGS(IsHovered)
-        .export_values();
+        ;
 }
 
 void bind_imgui_table_row_flags(py::module_& m) {
     py::enum_<ImGuiTableRowFlags_>(m, "TableRowFlags", py::arithmetic())
         .value("None_", ImGuiTableRowFlags_None)
         ENUM_IMGUI_TABLE_ROW_FLAGS(Headers)
-        .export_values();
+        ;
 }
 
 void bind_imgui_table_bg_target(py::module_& m) {
@@ -805,7 +805,7 @@ void bind_imgui_table_bg_target(py::module_& m) {
         ENUM_IMGUI_TABLE_BG_TARGET(RowBg0)
         ENUM_IMGUI_TABLE_BG_TARGET(RowBg1)
         ENUM_IMGUI_TABLE_BG_TARGET(CellBg)
-        .export_values();
+        ;
 }
 
 void bind_imgui_multi_select_flags(py::module_& m) {
@@ -826,7 +826,7 @@ void bind_imgui_multi_select_flags(py::module_& m) {
         ENUM_IMGUI_MULTI_SELECT_FLAGS(ScopeRect)
         ENUM_IMGUI_MULTI_SELECT_FLAGS(SelectOnClick)
         ENUM_IMGUI_MULTI_SELECT_FLAGS(SelectOnClickRelease)
-        .export_values();
+        ;
 }
 
 void bind_imgui_selection_request_type(py::module_& m) {
@@ -837,7 +837,7 @@ void bind_imgui_selection_request_type(py::module_& m) {
         .value("None_", ImGuiSelectionRequestType_None)
         ENUM_IMGUI_SELECTION_REQUEST_TYPE(SetAll)
         ENUM_IMGUI_SELECTION_REQUEST_TYPE(SetRange)
-        .export_values();
+        ;
 }
 
 void bind_imgui_draw_flags(py::module_& m) {
@@ -856,7 +856,7 @@ void bind_imgui_draw_flags(py::module_& m) {
         ENUM_IMGUI_DRAW_FLAGS(RoundCornersAll)
         ENUM_IMGUI_DRAW_FLAGS(RoundCornersDefault_)
         ENUM_IMGUI_DRAW_FLAGS(RoundCornersMask_)
-        .export_values();
+        ;
 }
 
 void bind_imgui_draw_list_flags(py::module_& m) {
@@ -866,7 +866,7 @@ void bind_imgui_draw_list_flags(py::module_& m) {
         ENUM_IMGUI_DRAW_LIST_FLAGS(AntiAliasedLinesUseTex)
         ENUM_IMGUI_DRAW_LIST_FLAGS(AntiAliasedFill)
         ENUM_IMGUI_DRAW_LIST_FLAGS(AllowVtxOffset)
-        .export_values();
+        ;
 }
 
 void bind_imgui_font_atlas_flags(py::module_& m) {
@@ -875,5 +875,5 @@ void bind_imgui_font_atlas_flags(py::module_& m) {
         ENUM_IMGUI_FONT_ATLAS_FLAGS(NoPowerOfTwoHeight)
         ENUM_IMGUI_FONT_ATLAS_FLAGS(NoMouseCursors)
         ENUM_IMGUI_FONT_ATLAS_FLAGS(NoBakedLines)
-        .export_values();
+        ;
 }
