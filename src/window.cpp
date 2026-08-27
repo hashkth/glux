@@ -60,6 +60,7 @@ void Window::init_glfw() {
 void Window::init_imgui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
 
     if (!ImGui_ImplGlfw_InitForOpenGL(window_, true))
         throw std::runtime_error("Failed to init ImGui GLFW backend");
@@ -71,6 +72,7 @@ void Window::cleanup() {
     if (window_) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
+        ImPlot::DestroyContext();
         ImGui::DestroyContext();
         glfwDestroyWindow(window_);
         glfwTerminate();

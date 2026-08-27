@@ -2,6 +2,7 @@
 #include "window.h"
 #include "input.h"
 #include "imgui_bindings.h"
+#include "implot_bindings.h"
 
 
 PYBIND11_MODULE(glux, m) {
@@ -64,7 +65,7 @@ PYBIND11_MODULE(glux, m) {
     bind_imgui_cond(imgui);
     bind_imgui_table_bg_target(imgui);
     bind_imgui_selection_request_type(imgui);
-
+    
     // Struct Bindings
     bind_imgui_vecs(imgui);
     bind_imgui_color(imgui);
@@ -78,7 +79,11 @@ PYBIND11_MODULE(glux, m) {
     bind_imgui_font_atlas_custom_rect(imgui);
     bind_imgui_font_atlas(imgui);
     bind_imgui_font(imgui);
-
+    
     // Function Bindings
     bind_imgui_funcs(imgui);
+
+    // ImPlot Bindings
+    py::module_ implot = m.def_submodule("implot", "ImPlot bindings");
+    bind_implot(implot);
 }
