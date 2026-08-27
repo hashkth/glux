@@ -21,5 +21,6 @@ GLUX bundles trimmed or modified versions of several open-source libraries. Lice
 - glad (Public Domain / MIT)
 
 ## Additional Notes
+- Parts of GLUX are generated using AI under careful supervision.
 - Currently, the builds are targeted for Windows 64-bit systems only.
 - Linux build support is untested.
