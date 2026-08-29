@@ -1,4 +1,5 @@
 @echo off
+
 setlocal enabledelayedexpansion
 
 :: List of Python versions to build against
@@ -16,12 +17,15 @@ for /f %%a in ('powershell -NoProfile -Command "Get-Date -Format \"ddMMyy_HHmmss
 
 :: Loop through Python versions
 for %%V in (%PYTHONS%) do (
+
     echo ==============================================
     echo Building for Python %%V
     echo ==============================================
 
     set "PYTHON_EXE=%PYTHON_BASE%\Python%%V%\python.exe"
+
     if exist "!PYTHON_EXE!" (
+
         set "BUILD_DIR=build_%%V"
 
         cmake -S . -B !BUILD_DIR! ^
@@ -33,14 +37,19 @@ for %%V in (%PYTHONS%) do (
         cmake --build !BUILD_DIR! --config Release
 
         if exist "!BUILD_DIR!\Release\glux.pyd" (
-            echo Copying glux%%V.pyd to release folder...
-            copy /Y "!BUILD_DIR!\Release\glux.pyd" "release\glux%%V.pyd"
 
-            echo Creating backup glux%%V_!TIMESTAMP!.pyd in backups...
-            copy /Y "!BUILD_DIR!\Release\glux.pyd" "backups\glux%%V_!TIMESTAMP!.pyd"
+            set "OUTPUT_NAME=glux-win_amd64-py%%V.pyd"
+
+            echo Copying !OUTPUT_NAME! to release folder...
+            copy /Y "!BUILD_DIR!\Release\glux.pyd" "release\!OUTPUT_NAME!"
+
+            echo Creating backup !OUTPUT_NAME!_!TIMESTAMP!.pyd in backups...
+            copy /Y "!BUILD_DIR!\Release\glux.pyd" "backups\glux-win_amd64-py%%V_!TIMESTAMP!.pyd"
+
         ) else (
-            echo [ERROR] Build for Python %%V failed — no .pyd found.
+            echo [ERROR] Build for Python %%V failed - no .pyd found.
         )
+
     ) else (
         echo [ERROR] Python %%V not found at !PYTHON_EXE!
     )
@@ -48,7 +57,7 @@ for %%V in (%PYTHONS%) do (
 
 echo ==============================================
 echo All builds finished!
-echo Output in release\glux*.pyd
+echo Output in release\glux-win_amd64-py*.pyd
 echo ==============================================
 
 exit /b
