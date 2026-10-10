@@ -338,7 +338,7 @@ void bind_implot_enums(py::module_& m) {
 
     // ImPlotMarker_ selects one marker at a time — no py::arithmetic().
     py::enum_<ImPlotMarker_>(m, "Marker")
-        ENUM_IMPLOT_MARKER(None)
+        .value("None_", ImPlotMarker_None)
         ENUM_IMPLOT_MARKER(Auto)
         ENUM_IMPLOT_MARKER(Circle)
         ENUM_IMPLOT_MARKER(Square)
