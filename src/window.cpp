@@ -229,12 +229,13 @@ void Window::set_cursor_visible(bool visible) {
 }
 
 void Window::set_cursor_position(float xpos, float ypos){
-    if (window_)
+    if (window_) {
         glfwSetCursorPos(window_, xpos, ypos);
         if (g_window->y_up_)
             cursor.set(xpos, g_window->height_ - ypos - 1);
         else
             cursor.set(xpos, ypos);
+    }
 }
 
 void Window::set_cursor_mode(CursorMode mode) {
