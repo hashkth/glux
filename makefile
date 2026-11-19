@@ -11,11 +11,13 @@ VERSIONS := 3.11 3.12 3.13
 VER ?=
 
 PYTHON_SUFFIX = $(subst .,,$(VER))
-PYTHON = py -$(VER)
 
-PY_PATH = $(shell $(PYTHON) -c "import sys; print(sys.prefix)")
-PY_INCLUDE = $(PY_PATH)/include
-PYBIND11_INCLUDE = $(shell $(PYTHON) -c "import pybind11; print(pybind11.get_include())")
+ifneq ($(strip $(VER)),)
+    PYTHON = py -$(VER)
+    PY_PATH = $(shell $(PYTHON) -c "import sys; print(sys.prefix)")
+    PY_INCLUDE = $(PY_PATH)/include
+    PYBIND11_INCLUDE = $(shell $(PYTHON) -c "import pybind11; print(pybind11.get_include())")
+endif
 
 CC := gcc
 CFLAGS := -O2 -Wall -ffunction-sections -fdata-sections -msse2
@@ -43,51 +45,59 @@ DEPFLAGS := -MMD -MP
 NAME := glux
 
 SRC_DIR := src
-GLAD_SRC := $(wildcard external/glad/src/*.c) \
-            $(wildcard external/glad/src/*.cpp)
+OBJ_DIR = obj/$(PYTHON_SUFFIX)
 
+GLAD_SRC := $(wildcard external/glad/src/*.c)
 IMGUI_SRC := $(wildcard external/imgui/src/*.cpp)
 SRC := 	$(wildcard $(SRC_DIR)/*.cpp) \
 		$(GLAD_SRC) \
 		$(IMGUI_SRC)
 
-OBJ_DIR = obj/$(PYTHON_SUFFIX)
 OBJ = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(filter %.cpp,$(SRC))) \
       $(patsubst %.c,$(OBJ_DIR)/%.o,$(filter %.c,$(SRC)))
 
 OUTPUT_DIR = release
+BACKUP_DIR = backups
 
 TARGET = $(OUTPUT_DIR)/$(NAME)$(PYTHON_SUFFIX).pyd
 
-.PHONY: all multi-build build-one build clean
+.PHONY: all build multi-build build-version build-target clean
 
 ifeq ($(strip $(VER)),)
 all: multi-build
+build: multi-build
 else
-all: build-one
+all: build
+build: build-version
 endif
+
+build-version:
+	@echo.
+	@echo Building library for Python $(VER)
+	@echo ----------------------------------
+	@$(MAKE) --no-print-directory VER=$(VER) build-target
+
+build-target: $(TARGET)
+
+multi-build: $(addprefix build-,$(subst .,,$(VERSIONS)))
 
 define BUILD_VERSION
 .PHONY: build-$(subst .,,$(1))
 
 build-$(subst .,,$(1)):
-	@echo.
-	@echo Building library for Python $(1)
-	@echo ----------------------------------
-	@$$(MAKE) -j4 --no-print-directory VER=$(1) build
+	@$$(MAKE) -j4 --no-print-directory VER=$(1) build-version
 endef
 
 $(foreach v,$(VERSIONS),$(eval $(call BUILD_VERSION,$(v))))
-
-multi-build: $(addprefix build-,$(subst .,,$(VERSIONS)))
-
-build: $(TARGET)
 
 $(TARGET): $(OBJ)
 	@if not exist "$(OUTPUT_DIR)" mkdir "$(OUTPUT_DIR)"
 	@echo Linking $@
 	@$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@echo BUILD SUCCESS: $(TARGET)
+	@if not exist "$(BACKUP_DIR)" mkdir "$(BACKUP_DIR)"
+	@powershell -NoProfile -Command "$$timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'; $$destination = '$(BACKUP_DIR)/glux$(PYTHON_SUFFIX)_' + $$timestamp + '.pyd'; Copy-Item -LiteralPath 'release/glux$(PYTHON_SUFFIX).pyd' -Destination $$destination"
+	@echo Backup complete!
 
 $(OBJ_DIR)/%.o: %.cpp
 	@if not exist "$(@D)" mkdir "$(@D)"
