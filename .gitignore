@@ -1,3 +1,6 @@
 obj/
 backups/
 release/
+build.log
+compile_commands.json
+.vscode
