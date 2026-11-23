@@ -1,16 +1,8 @@
-
 from typing import overload, Tuple, Callable, List, Optional
 
 
 class imgui:
 
-    # ==================================================================
-    # Flags & Enumerations
-    # ==================================================================
-
-    # ------------------------------------------------------------------
-    # WindowFlags  (bitmask)
-    # ------------------------------------------------------------------
     class WindowFlags:
         None_:                      imgui.WindowFlags
         NoTitleBar:                 imgui.WindowFlags
@@ -32,18 +24,15 @@ class imgui:
         NoNavInputs:                imgui.WindowFlags
         NoNavFocus:                 imgui.WindowFlags
         UnsavedDocument:            imgui.WindowFlags
-        NoNav:                      imgui.WindowFlags  # NoNavInputs | NoNavFocus
-        NoDecoration:               imgui.WindowFlags  # NoTitleBar | NoResize | NoScrollbar | NoCollapse
-        NoInputs:                   imgui.WindowFlags  # NoMouseInputs | NoNavInputs | NoNavFocus
+        NoNav:                      imgui.WindowFlags 
+        NoDecoration:               imgui.WindowFlags
+        NoInputs:                   imgui.WindowFlags
         def __or__(self, other: imgui.WindowFlags) -> imgui.WindowFlags: ...
         def __and__(self, other: imgui.WindowFlags) -> imgui.WindowFlags: ...
         def __xor__(self, other: imgui.WindowFlags) -> imgui.WindowFlags: ...
         def __invert__(self) -> imgui.WindowFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ChildFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ChildFlags:
         None_:                  imgui.ChildFlags
         Borders:                imgui.ChildFlags
@@ -60,9 +49,6 @@ class imgui:
         def __invert__(self) -> imgui.ChildFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ItemFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ItemFlags:
         None_:              imgui.ItemFlags
         NoTabStop:          imgui.ItemFlags
@@ -77,9 +63,6 @@ class imgui:
         def __invert__(self) -> imgui.ItemFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # InputTextFlags  (bitmask)
-    # ------------------------------------------------------------------
     class InputTextFlags:
         None_:                  imgui.InputTextFlags
         CharsDecimal:           imgui.InputTextFlags
@@ -112,9 +95,6 @@ class imgui:
         def __invert__(self) -> imgui.InputTextFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TreeNodeFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TreeNodeFlags:
         None_:                  imgui.TreeNodeFlags
         Selected:               imgui.TreeNodeFlags
@@ -134,16 +114,13 @@ class imgui:
         SpanAllColumns:         imgui.TreeNodeFlags
         LabelSpanAllColumns:    imgui.TreeNodeFlags
         NavLeftJumpsToParent:   imgui.TreeNodeFlags
-        CollapsingHeader:       imgui.TreeNodeFlags  # Framed | NoTreePushOnOpen | NoAutoOpenOnLog
+        CollapsingHeader:       imgui.TreeNodeFlags
         def __or__(self, other: imgui.TreeNodeFlags) -> imgui.TreeNodeFlags: ...
         def __and__(self, other: imgui.TreeNodeFlags) -> imgui.TreeNodeFlags: ...
         def __xor__(self, other: imgui.TreeNodeFlags) -> imgui.TreeNodeFlags: ...
         def __invert__(self) -> imgui.TreeNodeFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # PopupFlags  (bitmask)
-    # ------------------------------------------------------------------
     class PopupFlags:
         None_:                      imgui.PopupFlags
         MouseButtonLeft:            imgui.PopupFlags
@@ -156,16 +133,13 @@ class imgui:
         NoOpenOverItems:            imgui.PopupFlags
         AnyPopupId:                 imgui.PopupFlags
         AnyPopupLevel:              imgui.PopupFlags
-        AnyPopup:                   imgui.PopupFlags  # AnyPopupId | AnyPopupLevel
+        AnyPopup:                   imgui.PopupFlags
         def __or__(self, other: imgui.PopupFlags) -> imgui.PopupFlags: ...
         def __and__(self, other: imgui.PopupFlags) -> imgui.PopupFlags: ...
         def __xor__(self, other: imgui.PopupFlags) -> imgui.PopupFlags: ...
         def __invert__(self) -> imgui.PopupFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # SelectableFlags  (bitmask)
-    # ------------------------------------------------------------------
     class SelectableFlags:
         None_:              imgui.SelectableFlags
         NoAutoClosePopups:  imgui.SelectableFlags
@@ -180,9 +154,6 @@ class imgui:
         def __invert__(self) -> imgui.SelectableFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ComboFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ComboFlags:
         None_:           imgui.ComboFlags
         PopupAlignLeft:  imgui.ComboFlags
@@ -200,9 +171,6 @@ class imgui:
         def __invert__(self) -> imgui.ComboFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TabBarFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TabBarFlags:
         None_:                          imgui.TabBarFlags
         Reorderable:                    imgui.TabBarFlags
@@ -222,9 +190,6 @@ class imgui:
         def __invert__(self) -> imgui.TabBarFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TabItemFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TabItemFlags:
         None_:                          imgui.TabItemFlags
         UnsavedDocument:                imgui.TabItemFlags
@@ -242,25 +207,19 @@ class imgui:
         def __invert__(self) -> imgui.TabItemFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # FocusedFlags  (bitmask)
-    # ------------------------------------------------------------------
     class FocusedFlags:
         None_:               imgui.FocusedFlags
         ChildWindows:        imgui.FocusedFlags
         RootWindow:          imgui.FocusedFlags
         AnyWindow:           imgui.FocusedFlags
         NoPopupHierarchy:    imgui.FocusedFlags
-        RootAndChildWindows: imgui.FocusedFlags  # RootWindow | ChildWindows
+        RootAndChildWindows: imgui.FocusedFlags
         def __or__(self, other: imgui.FocusedFlags) -> imgui.FocusedFlags: ...
         def __and__(self, other: imgui.FocusedFlags) -> imgui.FocusedFlags: ...
         def __xor__(self, other: imgui.FocusedFlags) -> imgui.FocusedFlags: ...
         def __invert__(self) -> imgui.FocusedFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # HoveredFlags  (bitmask)
-    # ------------------------------------------------------------------
     class HoveredFlags:
         None_:                          imgui.HoveredFlags
         ChildWindows:                   imgui.HoveredFlags
@@ -273,9 +232,9 @@ class imgui:
         AllowWhenOverlappedByWindow:    imgui.HoveredFlags
         AllowWhenDisabled:              imgui.HoveredFlags
         NoNavOverride:                  imgui.HoveredFlags
-        AllowWhenOverlapped:            imgui.HoveredFlags  # ByItem | ByWindow
-        RectOnly:                       imgui.HoveredFlags  # BlockedByPopup | BlockedByActiveItem | OverlappedByItem
-        RootAndChildWindows:            imgui.HoveredFlags  # RootWindow | ChildWindows
+        AllowWhenOverlapped:            imgui.HoveredFlags
+        RectOnly:                       imgui.HoveredFlags
+        RootAndChildWindows:            imgui.HoveredFlags
         ForTooltip:                     imgui.HoveredFlags
         Stationary:                     imgui.HoveredFlags
         DelayNone:                      imgui.HoveredFlags
@@ -288,9 +247,6 @@ class imgui:
         def __invert__(self) -> imgui.HoveredFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # DragDropFlags  (bitmask)
-    # ------------------------------------------------------------------
     class DragDropFlags:
         None_:                      imgui.DragDropFlags
         SourceNoPreviewTooltip:     imgui.DragDropFlags
@@ -304,16 +260,13 @@ class imgui:
         AcceptBeforeDelivery:       imgui.DragDropFlags
         AcceptNoDrawDefaultRect:    imgui.DragDropFlags
         AcceptNoPreviewTooltip:     imgui.DragDropFlags
-        AcceptPeekOnly:             imgui.DragDropFlags  # AcceptBeforeDelivery | AcceptNoDrawDefaultRect
+        AcceptPeekOnly:             imgui.DragDropFlags
         def __or__(self, other: imgui.DragDropFlags) -> imgui.DragDropFlags: ...
         def __and__(self, other: imgui.DragDropFlags) -> imgui.DragDropFlags: ...
         def __xor__(self, other: imgui.DragDropFlags) -> imgui.DragDropFlags: ...
         def __invert__(self) -> imgui.DragDropFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # DataType  (plain enum — no bitwise ops)
-    # ------------------------------------------------------------------
     class DataType:
         S8:     imgui.DataType
         U8:     imgui.DataType
@@ -329,9 +282,6 @@ class imgui:
         String: imgui.DataType
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # Dir  (plain enum — no bitwise ops)
-    # ------------------------------------------------------------------
     class Dir:
         None_:  imgui.Dir
         Left:   imgui.Dir
@@ -340,21 +290,12 @@ class imgui:
         Down:   imgui.Dir
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # SortDirection  (plain enum — no bitwise ops)
-    # ------------------------------------------------------------------
     class SortDirection:
         None_:      imgui.SortDirection
         Ascending:  imgui.SortDirection
         Descending: imgui.SortDirection
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # Key  (bitmask — includes ImGuiMod values in the same int space)
-    #
-    # All names are prefixed "K_" to avoid clashes with Python builtins
-    # (e.g. K_Tab, K_A).  Modifier names use "K_Mod_" prefix.
-    # ------------------------------------------------------------------
     class Key:
         None_:              imgui.Key
         K_Tab:              imgui.Key
@@ -508,7 +449,6 @@ class imgui:
         K_MouseX2:          imgui.Key
         K_MouseWheelX:      imgui.Key
         K_MouseWheelY:      imgui.Key
-        # Modifier masks — share integer space with key codes
         K_Mod_None:         imgui.Key
         K_Mod_Ctrl:         imgui.Key
         K_Mod_Shift:        imgui.Key
@@ -521,9 +461,6 @@ class imgui:
         def __invert__(self) -> imgui.Key: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # InputFlags  (bitmask)
-    # ------------------------------------------------------------------
     class InputFlags:
         None_:                  imgui.InputFlags
         Repeat:                 imgui.InputFlags
@@ -542,9 +479,6 @@ class imgui:
         def __invert__(self) -> imgui.InputFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ConfigFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ConfigFlags:
         None_:               imgui.ConfigFlags
         NavEnableKeyboard:   imgui.ConfigFlags
@@ -558,9 +492,6 @@ class imgui:
         def __invert__(self) -> imgui.ConfigFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # Col  (plain enum — colour slot indices, no bitwise ops)
-    # ------------------------------------------------------------------
     class Col:
         Text:                       imgui.Col
         TextDisabled:               imgui.Col
@@ -622,9 +553,6 @@ class imgui:
         ModalWindowDimBg:           imgui.Col
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # StyleVar  (plain enum — style slot indices, no bitwise ops)
-    # ------------------------------------------------------------------
     class StyleVar:
         Alpha:                          imgui.StyleVar
         DisabledAlpha:                  imgui.StyleVar
@@ -664,9 +592,6 @@ class imgui:
         SeparatorTextPadding:           imgui.StyleVar
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ButtonFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ButtonFlags:
         None_:              imgui.ButtonFlags
         MouseButtonLeft:    imgui.ButtonFlags
@@ -680,9 +605,6 @@ class imgui:
         def __invert__(self) -> imgui.ButtonFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # ColorEditFlags  (bitmask)
-    # ------------------------------------------------------------------
     class ColorEditFlags:
         None_:              imgui.ColorEditFlags
         NoAlpha:            imgui.ColorEditFlags
@@ -721,9 +643,6 @@ class imgui:
         def __invert__(self) -> imgui.ColorEditFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # SliderFlags  (bitmask)
-    # ------------------------------------------------------------------
     class SliderFlags:
         None_:           imgui.SliderFlags
         Logarithmic:     imgui.SliderFlags
@@ -741,18 +660,12 @@ class imgui:
         def __invert__(self) -> imgui.SliderFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # MouseButton  (plain enum — no bitwise ops)
-    # ------------------------------------------------------------------
     class MouseButton:
         Left:   imgui.MouseButton
         Right:  imgui.MouseButton
         Middle: imgui.MouseButton
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # MouseCursor  (plain enum — None_ = -1 sentinel, no bitwise ops)
-    # ------------------------------------------------------------------
     class MouseCursor:
         None_:      imgui.MouseCursor
         Arrow:      imgui.MouseCursor
@@ -768,9 +681,6 @@ class imgui:
         NotAllowed: imgui.MouseCursor
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # Cond  (plain enum — exclusive conditions, no bitwise ops)
-    # ------------------------------------------------------------------
     class Cond:
         None_:        imgui.Cond
         Always:       imgui.Cond
@@ -779,9 +689,6 @@ class imgui:
         Appearing:    imgui.Cond
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TableFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TableFlags:
         None_:                      imgui.TableFlags
         Resizable:                  imgui.TableFlags
@@ -795,11 +702,11 @@ class imgui:
         BordersOuterH:              imgui.TableFlags
         BordersInnerV:              imgui.TableFlags
         BordersOuterV:              imgui.TableFlags
-        BordersH:                   imgui.TableFlags  # InnerH | OuterH
-        BordersV:                   imgui.TableFlags  # InnerV | OuterV
-        BordersInner:               imgui.TableFlags  # InnerH | InnerV
-        BordersOuter:               imgui.TableFlags  # OuterH | OuterV
-        Borders:                    imgui.TableFlags  # InnerH | InnerV | OuterH | OuterV
+        BordersH:                   imgui.TableFlags 
+        BordersV:                   imgui.TableFlags 
+        BordersInner:               imgui.TableFlags 
+        BordersOuter:               imgui.TableFlags 
+        Borders:                    imgui.TableFlags 
         NoBordersInBody:            imgui.TableFlags
         NoBordersInBodyUntilResize: imgui.TableFlags
         SizingFixedFit:             imgui.TableFlags
@@ -825,9 +732,6 @@ class imgui:
         def __invert__(self) -> imgui.TableFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TableColumnFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TableColumnFlags:
         None_:                  imgui.TableColumnFlags
         Disabled:               imgui.TableColumnFlags
@@ -849,19 +753,16 @@ class imgui:
         IndentEnable:           imgui.TableColumnFlags
         IndentDisable:          imgui.TableColumnFlags
         AngledHeader:           imgui.TableColumnFlags
-        IsEnabled:              imgui.TableColumnFlags  # read-only output flag
-        IsVisible:              imgui.TableColumnFlags  # read-only output flag
-        IsSorted:               imgui.TableColumnFlags  # read-only output flag
-        IsHovered:              imgui.TableColumnFlags  # read-only output flag
+        IsEnabled:              imgui.TableColumnFlags 
+        IsVisible:              imgui.TableColumnFlags 
+        IsSorted:               imgui.TableColumnFlags 
+        IsHovered:              imgui.TableColumnFlags 
         def __or__(self, other: imgui.TableColumnFlags) -> imgui.TableColumnFlags: ...
         def __and__(self, other: imgui.TableColumnFlags) -> imgui.TableColumnFlags: ...
         def __xor__(self, other: imgui.TableColumnFlags) -> imgui.TableColumnFlags: ...
         def __invert__(self) -> imgui.TableColumnFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TableRowFlags  (bitmask)
-    # ------------------------------------------------------------------
     class TableRowFlags:
         None_:   imgui.TableRowFlags
         Headers: imgui.TableRowFlags
@@ -871,9 +772,6 @@ class imgui:
         def __invert__(self) -> imgui.TableRowFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # TableBgTarget  (bitmask)
-    # ------------------------------------------------------------------
     class TableBgTarget:
         None_:  imgui.TableBgTarget
         RowBg0: imgui.TableBgTarget
@@ -885,9 +783,6 @@ class imgui:
         def __invert__(self) -> imgui.TableBgTarget: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # MultiSelectFlags  (bitmask)
-    # ------------------------------------------------------------------
     class MultiSelectFlags:
         None_:                  imgui.MultiSelectFlags
         SingleSelect:           imgui.MultiSelectFlags
@@ -911,18 +806,12 @@ class imgui:
         def __invert__(self) -> imgui.MultiSelectFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # SelectionRequestType  (plain enum — no bitwise ops)
-    # ------------------------------------------------------------------
     class SelectionRequestType:
         None_:    imgui.SelectionRequestType
         SetAll:   imgui.SelectionRequestType
         SetRange: imgui.SelectionRequestType
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # DrawFlags  (bitmask)
-    # ------------------------------------------------------------------
     class DrawFlags:
         None_:                   imgui.DrawFlags
         Closed:                  imgui.DrawFlags
@@ -931,12 +820,12 @@ class imgui:
         RoundCornersBottomLeft:  imgui.DrawFlags
         RoundCornersBottomRight: imgui.DrawFlags
         RoundCornersNone:        imgui.DrawFlags
-        RoundCornersTop:         imgui.DrawFlags  # TopLeft | TopRight
-        RoundCornersBottom:      imgui.DrawFlags  # BottomLeft | BottomRight
-        RoundCornersLeft:        imgui.DrawFlags  # TopLeft | BottomLeft
-        RoundCornersRight:       imgui.DrawFlags  # TopRight | BottomRight
-        RoundCornersAll:         imgui.DrawFlags  # all four corners
-        RoundCornersDefault_:    imgui.DrawFlags  # = RoundCornersAll
+        RoundCornersTop:         imgui.DrawFlags
+        RoundCornersBottom:      imgui.DrawFlags 
+        RoundCornersLeft:        imgui.DrawFlags
+        RoundCornersRight:       imgui.DrawFlags 
+        RoundCornersAll:         imgui.DrawFlags
+        RoundCornersDefault_:    imgui.DrawFlags
         RoundCornersMask_:       imgui.DrawFlags
         def __or__(self, other: imgui.DrawFlags) -> imgui.DrawFlags: ...
         def __and__(self, other: imgui.DrawFlags) -> imgui.DrawFlags: ...
@@ -944,9 +833,6 @@ class imgui:
         def __invert__(self) -> imgui.DrawFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # DrawListFlags  (bitmask)
-    # ------------------------------------------------------------------
     class DrawListFlags:
         None_:                   imgui.DrawListFlags
         AntiAliasedLines:        imgui.DrawListFlags
@@ -959,9 +845,6 @@ class imgui:
         def __invert__(self) -> imgui.DrawListFlags: ...
         def __int__(self) -> int: ...
 
-    # ------------------------------------------------------------------
-    # FontAtlasFlags  (bitmask)
-    # ------------------------------------------------------------------
     class FontAtlasFlags:
         None_:               imgui.FontAtlasFlags
         NoPowerOfTwoHeight:  imgui.FontAtlasFlags
@@ -973,13 +856,6 @@ class imgui:
         def __invert__(self) -> imgui.FontAtlasFlags: ...
         def __int__(self) -> int: ...
 
-    # ==================================================================
-    # Structs & Classes
-    # ==================================================================
-
-    # ------------------------------------------------------------------
-    # Vec2
-    # ------------------------------------------------------------------
     class Vec2:
         x: float
         y: float
@@ -988,9 +864,6 @@ class imgui:
         def __repr__(self) -> str: ...
         def __eq__(self, other: imgui.Vec2) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Vec4
-    # ------------------------------------------------------------------
     class Vec4:
         x: float
         y: float
@@ -1001,15 +874,12 @@ class imgui:
         def __repr__(self) -> str: ...
         def __eq__(self, other: imgui.Vec4) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Color
-    # ------------------------------------------------------------------
     class Color:
         r: float
         g: float
         b: float
         a: float
-        value: imgui.Vec4  # direct access to underlying ImVec4
+        value: imgui.Vec4
 
         @overload
         def __init__(self, r: float, g: float, b: float, a: float = 1.0) -> None: ...
@@ -1020,22 +890,17 @@ class imgui:
             """Return the colour as a Vec4 (convenience alias for .value)."""
             ...
 
-    # ------------------------------------------------------------------
-    # IO
-    # ------------------------------------------------------------------
     class IO:
-        # Display / timing
         display_size:               imgui.Vec2
         delta_time:                 float
         ini_saving_rate:            float
         font_global_scale:          float
         display_framebuffer_scale:  imgui.Vec2
 
-        # Mouse / keyboard state
         mouse_draw_cursor:           bool
         mouse_wheel:                 float
         mouse_wheel_h:               float
-        mouse_down:                  list[bool]  # 5-element list
+        mouse_down:                  list[bool]
         mouse_double_click_time:     float
         mouse_double_click_max_dist: float
         mouse_drag_threshold:        float
@@ -1048,9 +913,8 @@ class imgui:
         key_repeat_delay: float
         key_repeat_rate:  float
 
-        # Config flags — properly typed
         config_flags:   imgui.ConfigFlags
-        backend_flags:  int  # ImGuiBackendFlags — not bound as an enum
+        backend_flags:  int
         config_nav_swap_gamepad_buttons:         bool
         config_nav_move_set_mouse_pos:           bool
         config_nav_capture_keyboard:             bool
@@ -1066,7 +930,6 @@ class imgui:
         config_windows_move_from_title_bar_only: bool
         config_scrollbar_scroll_by_page:         bool
 
-        # Read-only output fields
         @property
         def framerate(self) -> float: ...
         @property
@@ -1080,19 +943,13 @@ class imgui:
         @property
         def nav_visible(self) -> bool: ...
 
-        # Font access
-        font_default: imgui.Font  # read-write, reference
+        font_default: imgui.Font
         @property
-        def fonts(self) -> imgui.FontAtlas: ...  # read-only, reference
+        def fonts(self) -> imgui.FontAtlas: ...
 
-        # File paths (heap-owned by binding layer after first set)
         ini_filename: str
         log_filename: str
 
-    # ------------------------------------------------------------------
-    # Style
-    # ------------------------------------------------------------------
-        # Scalar style values
         alpha:                               float
         disabled_alpha:                      float
         window_rounding:                     float
@@ -1129,12 +986,10 @@ class imgui:
         hover_delay_short:                   float
         hover_delay_normal:                  float
 
-        # Boolean style flags
         anti_aliased_lines:         bool
         anti_aliased_lines_use_tex: bool
         anti_aliased_fill:          bool
 
-        # Vec2 style values
         window_padding:                  imgui.Vec2
         window_min_size:                 imgui.Vec2
         window_title_align:              imgui.Vec2
@@ -1151,24 +1006,18 @@ class imgui:
         display_window_padding:          imgui.Vec2
         display_safe_area_padding:       imgui.Vec2
 
-        # Enum-typed style values — properly typed
         window_menu_button_position:   imgui.Dir
         color_button_position:         imgui.Dir
         tree_lines_flags:              imgui.TreeNodeFlags
         hover_flags_for_tooltip_mouse: imgui.HoveredFlags
         hover_flags_for_tooltip_nav:   imgui.HoveredFlags
 
-        # Color table — index with imgui.Col.*
         colors: list[imgui.Vec4]
 
         def scale_all_sizes(self, scale_factor: float) -> None: ...
 
-    # ------------------------------------------------------------------
-    # DrawList
-    # ------------------------------------------------------------------
         flags: imgui.DrawListFlags
 
-        # Primitives
         def add_line(self, p1: imgui.Vec2, p2: imgui.Vec2, col: int, thickness: float = 1.0) -> None: ...
         def add_rect(self, p_min: imgui.Vec2, p_max: imgui.Vec2, col: int, rounding: float = 0.0, flags: imgui.DrawFlags = ..., thickness: float = 1.0) -> None: ...
         def add_rect_filled(self, p_min: imgui.Vec2, p_max: imgui.Vec2, col: int, rounding: float = 0.0, flags: imgui.DrawFlags = ...) -> None: ...
@@ -1184,17 +1033,14 @@ class imgui:
         def add_bezier_cubic(self, p1: imgui.Vec2, p2: imgui.Vec2, p3: imgui.Vec2, p4: imgui.Vec2, col: int, thickness: float, num_segments: int = 0) -> None: ...
         def add_bezier_quadratic(self, p1: imgui.Vec2, p2: imgui.Vec2, p3: imgui.Vec2, col: int, thickness: float, num_segments: int = 0) -> None: ...
 
-        # Clip rects
         def push_clip_rect(self, min: imgui.Vec2, max: imgui.Vec2, intersect_with_current: bool = False) -> None: ...
         def pop_clip_rect(self) -> None: ...
         def get_clip_rect_min(self) -> imgui.Vec2: ...
         def get_clip_rect_max(self) -> imgui.Vec2: ...
 
-        # Textures
         def push_texture_id(self, texture_id: int) -> None: ...
         def pop_texture_id(self) -> None: ...
 
-        # Path API
         def path_clear(self) -> None: ...
         def path_line_to(self, pos: imgui.Vec2) -> None: ...
         def path_fill_convex(self, col: int) -> None: ...
@@ -1204,9 +1050,6 @@ class imgui:
             """Return a heap-allocated clone. Caller is responsible for lifetime."""
             ...
 
-    # ------------------------------------------------------------------
-    # Viewport
-    # ------------------------------------------------------------------
     class Viewport:
         @property
         def id(self) -> int: ...
@@ -1226,11 +1069,8 @@ class imgui:
         def get_center(self) -> imgui.Vec2: ...
         def get_work_center(self) -> imgui.Vec2: ...
 
-    # ------------------------------------------------------------------
-    # FontConfig
-    # ------------------------------------------------------------------
     class FontConfig:
-        font_data:               int    # void* — raw pointer
+        font_data:               int
         font_data_size:          int
         font_data_owned_by_atlas: bool
         merge_mode:              bool
@@ -1240,22 +1080,19 @@ class imgui:
         oversample_v:            int
         size_pixels:             float
         glyph_offset:            imgui.Vec2
-        glyph_ranges:            int    # const ImWchar* — raw pointer
+        glyph_ranges:            int
         glyph_min_advance_x:     float
         glyph_max_advance_x:     float
         glyph_extra_advance_x:   float
         font_builder_flags:      int
         rasterizer_multiply:     float
         rasterizer_density:      float
-        ellipsis_char:           int    # ImWchar
-        name:                    str    # clamped to internal buffer size
-        dst_font:                imgui.Font  # reference
+        ellipsis_char:           int
+        name:                    str
+        dst_font:                imgui.Font
 
         def __init__(self) -> None: ...
 
-    # ------------------------------------------------------------------
-    # FontGlyph
-    # ------------------------------------------------------------------
     class FontGlyph:
         colored:   bool
         visible:   bool
@@ -1270,9 +1107,6 @@ class imgui:
         u1: float
         v1: float
 
-    # ------------------------------------------------------------------
-    # FontGlyphRangesBuilder
-    # ------------------------------------------------------------------
     class FontGlyphRangesBuilder:
         def __init__(self) -> None: ...
         def clear(self) -> None: ...
@@ -1280,7 +1114,7 @@ class imgui:
         def set_bit(self, n: int) -> None: ...
         def add_char(self, c: int) -> None: ...
         def add_text(self, text: str, text_end: Optional[str] = None) -> None: ...
-        def add_ranges(self, ranges: int) -> None: ...  # const ImWchar* pointer
+        def add_ranges(self, ranges: int) -> None: ...
         def build_ranges(self) -> list[int]:
             """
             Build and return the packed glyph ranges as a list of ImWchar values.
@@ -1289,9 +1123,6 @@ class imgui:
             """
             ...
 
-    # ------------------------------------------------------------------
-    # FontAtlasCustomRect
-    # ------------------------------------------------------------------
     class FontAtlasCustomRect:
         x:               int
         y:               int
@@ -1301,27 +1132,24 @@ class imgui:
         glyph_colored:   bool
         glyph_advance_x: float
         glyph_offset:    imgui.Vec2
-        font:            imgui.Font  # reference
+        font:            imgui.Font
 
         def __init__(self) -> None: ...
         def is_packed(self) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # FontAtlas
-    # ------------------------------------------------------------------
     class FontAtlas:
         flags:              imgui.FontAtlasFlags
-        tex_id:             int   # ImTextureID
+        tex_id:             int
         tex_desired_width:  int
         tex_glyph_padding:  int
-        user_data:          int   # void* — raw pointer
+        user_data:          int
         tex_width:          int
         tex_height:         int
         tex_uv_scale:       imgui.Vec2
         tex_uv_white_pixel: imgui.Vec2
         fonts:              list[imgui.Font]
         custom_rects:       list[imgui.FontAtlasCustomRect]
-        sources:            list[imgui.FontConfig]  # ImFontAtlasSources
+        sources:            list[imgui.FontConfig]
 
         def __init__(self) -> None: ...
 
@@ -1366,7 +1194,6 @@ class imgui:
             glyph_ranges: Optional[int] = None,
         ) -> imgui.Font: ...
 
-        # Glyph range helpers — return raw ImWchar* pointers (as int)
         def get_glyph_ranges_default(self) -> int: ...
         def get_glyph_ranges_greek(self) -> int: ...
         def get_glyph_ranges_korean(self) -> int: ...
@@ -1405,18 +1232,15 @@ class imgui:
         ) -> int: ...
         def get_custom_rect_by_index(self, index: int) -> imgui.FontAtlasCustomRect: ...
 
-    # ------------------------------------------------------------------
-    # Font
-    # ------------------------------------------------------------------
     class Font:
         fallback_advance_x:    float
         font_size:             float
-        fallback_glyph:        imgui.FontGlyph  # reference
-        fallback_char:         int              # ImWchar
+        fallback_glyph:        imgui.FontGlyph
+        fallback_char:         int
         scale:                 float
         ascent:                float
         descent:               float
-        ellipsis_char:         int              # ImWchar
+        ellipsis_char:         int
         ellipsis_char_count:   int
         ellipsis_width:        float
         ellipsis_char_step:    float
@@ -1468,13 +1292,6 @@ class imgui:
             cpu_fine_clip: bool = False,
         ) -> None: ...
 
-    # ==================================================================
-    # Free functions  (bound onto the imgui module / class)
-    # ==================================================================
-
-    # ------------------------------------------------------------------
-    # Window
-    # ------------------------------------------------------------------
     def begin(
         name: str,
         p_open: Optional[bool] = None,
@@ -1484,8 +1301,8 @@ class imgui:
         Begin a new window.
 
         p_open controls the close button:
-          - None  → no close button, returns (visible, None)
-          - bool  → shows close button, returns (visible, is_still_open)
+          - None - no close button, returns (visible, None)
+          - bool - shows close button, returns (visible, is_still_open)
 
         Always call end() regardless of the return value.
         """
@@ -1493,16 +1310,10 @@ class imgui:
 
     def end() -> None: ...
 
-    # ------------------------------------------------------------------
-    # Text
-    # ------------------------------------------------------------------
     def text(text: str) -> None: ...
 
     def text_colored(color: imgui.Vec4, text: str) -> None: ...
 
-    # ------------------------------------------------------------------
-    # Styling
-    # ------------------------------------------------------------------
     def push_style_color(idx: imgui.Col, color: imgui.Vec4) -> None: ...
     def pop_style_color(count: int = 1) -> None: ...
 
@@ -1520,9 +1331,6 @@ class imgui:
     def begin_group() -> None: ...
     def end_group() -> None: ...
 
-    # ------------------------------------------------------------------
-    # Layout / Spacing
-    # ------------------------------------------------------------------
     def same_line(offset_from_start_x: float = 0.0, spacing: float = -1.0) -> None:
         """
         Call between widgets to place the next one on the same line.
@@ -1535,9 +1343,6 @@ class imgui:
     def separator() -> None: ...
     def spacing() -> None: ...
 
-    # ------------------------------------------------------------------
-    # Next-window setup
-    # ------------------------------------------------------------------
     def set_next_window_pos(
         pos: imgui.Vec2,
         cond: imgui.Cond = ...,
@@ -1563,16 +1368,10 @@ class imgui:
 
     def set_next_window_focus() -> None: ...
 
-    # ------------------------------------------------------------------
-    # Cursor / Item focus
-    # ------------------------------------------------------------------
     def set_cursor_pos(local_pos: imgui.Vec2) -> None: ...
     def set_cursor_screen_pos(screen_pos: imgui.Vec2) -> None: ...
     def set_item_default_focus() -> None: ...
 
-    # ------------------------------------------------------------------
-    # Basic widgets
-    # ------------------------------------------------------------------
     def button(label: str, size: imgui.Vec2 = ...) -> bool: ...
     def small_button(label: str) -> bool: ...
     def arrow_button(str_id: str, dir: imgui.Dir) -> bool: ...
@@ -1602,9 +1401,6 @@ class imgui:
         """Returns (changed, current_value). current_value is updated to button_value if clicked."""
         ...
 
-    # ------------------------------------------------------------------
-    # Text inputs
-    # ------------------------------------------------------------------
     def input_text(
         label: str,
         text: str,
@@ -1631,9 +1427,6 @@ class imgui:
         """Returns (changed, new_text)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Numeric inputs
-    # ------------------------------------------------------------------
     def input_float(
         label: str,
         value: float,
@@ -1655,9 +1448,6 @@ class imgui:
         """Returns (changed, new_value)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Sliders
-    # ------------------------------------------------------------------
     def slider_float(
         label: str,
         value: float,
@@ -1680,9 +1470,6 @@ class imgui:
         """Returns (changed, new_value)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Drag floats
-    # ------------------------------------------------------------------
     def drag_float(
         label: str,
         value: float,
@@ -1731,9 +1518,6 @@ class imgui:
         """Returns (changed, new_value)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Drag ints
-    # ------------------------------------------------------------------
     def drag_int(
         label: str,
         value: int,
@@ -1782,9 +1566,6 @@ class imgui:
         """Returns (changed, new_value)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Combo
-    # ------------------------------------------------------------------
     def combo(
         label: str,
         current_item: int,
@@ -1793,9 +1574,6 @@ class imgui:
         """Returns (changed, new_index)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Color pickers / editors
-    # ------------------------------------------------------------------
     def color_edit3(
         label: str,
         color: imgui.Vec4,
@@ -1831,9 +1609,6 @@ class imgui:
         """Full-size RGBA picker. Returns (changed, new_color)."""
         ...
 
-    # ------------------------------------------------------------------
-    # Image
-    # ------------------------------------------------------------------
     def image(
         texture_id: int,
         image_size: imgui.Vec2,
@@ -1849,9 +1624,6 @@ class imgui:
         """
         ...
 
-    # ------------------------------------------------------------------
-    # Drawing / Viewport
-    # ------------------------------------------------------------------
     def get_window_draw_list() -> imgui.DrawList:
         """
         Return the draw list for the current window.
@@ -1871,7 +1643,6 @@ class imgui:
         """Return the main viewport. Do not store across frames."""
         ...
 
-    # DrawList standalone functions (operate on an explicit DrawList argument)
     def drawlist_add_line(
         drawlist: imgui.DrawList,
         p1: imgui.Vec2,
@@ -1950,9 +1721,6 @@ class imgui:
         col: int = ...,
     ) -> None: ...
 
-    # ------------------------------------------------------------------
-    # Text utilities
-    # ------------------------------------------------------------------
     def calc_text_size(text: str) -> Tuple[float, float]:
         """Return (width, height) of the given text using the current font."""
         ...
@@ -1961,16 +1729,12 @@ class imgui:
         """Return (width, height) of the remaining content region in the current window."""
         ...
 
-    # ------------------------------------------------------------------
-    # Fonts
-    # ------------------------------------------------------------------
     def push_font(font: imgui.Font) -> None: ...
     def pop_font() -> None: ...
 
     def get_font_size() -> float: ...
     def get_font_tex_uv_white_pixel() -> Tuple[float, float]: ...
 
-    # Glyph range helpers (route through current context's font atlas)
     def get_glyph_ranges_default() -> int: ...
     def get_glyph_ranges_greek() -> int: ...
     def get_glyph_ranges_korean() -> int: ...
@@ -1981,9 +1745,6 @@ class imgui:
     def get_glyph_ranges_thai() -> int: ...
     def get_glyph_ranges_vietnamese() -> int: ...
 
-    # ------------------------------------------------------------------
-    # Tables
-    # ------------------------------------------------------------------
     def begin_table(
         str_id: str,
         column_count: int,
@@ -2039,9 +1800,6 @@ class imgui:
         column_n: int = -1,
     ) -> None: ...
 
-    # ------------------------------------------------------------------
-    # Tree / Collapsing headers
-    # ------------------------------------------------------------------
     def tree_node(label: str) -> bool: ...
 
     def tree_node_ex(
@@ -2060,9 +1818,6 @@ class imgui:
     def set_next_item_open(is_open: bool, cond: imgui.Cond = ...) -> None: ...
     def get_tree_node_to_label_spacing() -> float: ...
 
-    # ------------------------------------------------------------------
-    # Menus
-    # ------------------------------------------------------------------
     def begin_menu_bar() -> bool: ...
     def end_menu_bar() -> None: ...
     def begin_main_menu_bar() -> bool: ...
@@ -2078,9 +1833,6 @@ class imgui:
         enabled: bool = True,
     ) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Popups
-    # ------------------------------------------------------------------
     def open_popup(str_id: str, flags: imgui.PopupFlags = ...) -> None: ...
 
     def begin_popup(str_id: str, flags: imgui.WindowFlags = ...) -> bool: ...
@@ -2116,9 +1868,6 @@ class imgui:
 
     def is_popup_open(str_id: str, flags: imgui.PopupFlags = ...) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Selectables
-    # ------------------------------------------------------------------
     def selectable(
         label: str,
         selected: bool = False,
@@ -2126,9 +1875,6 @@ class imgui:
         size: imgui.Vec2 = ...,
     ) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Item state queries
-    # ------------------------------------------------------------------
     def is_item_hovered(flags: imgui.HoveredFlags = ...) -> bool: ...
     def is_item_active() -> bool: ...
     def is_item_focused() -> bool: ...
@@ -2144,15 +1890,9 @@ class imgui:
     def get_item_rect_max() -> Tuple[float, float]: ...
     def get_item_rect_size() -> Tuple[float, float]: ...
 
-    # ------------------------------------------------------------------
-    # Window state queries
-    # ------------------------------------------------------------------
     def is_window_focused(flags: imgui.FocusedFlags = ...) -> bool: ...
     def is_window_hovered(flags: imgui.HoveredFlags = ...) -> bool: ...
 
-    # ------------------------------------------------------------------
-    # Mouse queries
-    # ------------------------------------------------------------------
     def is_mouse_down(button: imgui.MouseButton = ...) -> bool: ...
     def is_mouse_clicked(button: imgui.MouseButton = ..., repeat: bool = False) -> bool: ...
     def is_mouse_released(button: imgui.MouseButton = ...) -> bool: ...
@@ -2181,9 +1921,6 @@ class imgui:
         """
         ...
 
-    # ------------------------------------------------------------------
-    # Keyboard queries
-    # ------------------------------------------------------------------
     def is_key_down(key: imgui.Key) -> bool: ...
     def is_key_pressed(key: imgui.Key, repeat: bool = True) -> bool: ...
     def is_key_released(key: imgui.Key) -> bool: ...
@@ -2196,9 +1933,6 @@ class imgui:
 
     def set_keyboard_focus_here(offset: int = 0) -> None: ...
 
-    # ------------------------------------------------------------------
-    # Misc utilities
-    # ------------------------------------------------------------------
     def get_time() -> float: ...
     def get_frame_count() -> int: ...
     def get_frame_height() -> float: ...
@@ -2225,17 +1959,11 @@ class imgui:
         """Return a reference to the global ImGuiIO. Do not store long-term."""
         ...
 
-    # ------------------------------------------------------------------
-    # Clipboard
-    # ------------------------------------------------------------------
     def get_clipboard_text() -> str: ...
     def set_clipboard_text(text: str) -> None: ...
 
 class implot:
 
-    # ==================================================================
-    # Enums & Flags
-    # ==================================================================
 
     class Axis:
         X1: implot.Axis
@@ -2684,9 +2412,6 @@ class implot:
         Scott: implot.Bin
         def __int__(self) -> int: ...
 
-    # ==================================================================
-    # Structs
-    # ==================================================================
 
     class Spec:
         line_color: Tuple[float, float, float, float]
@@ -2778,11 +2503,7 @@ class implot:
         zoom_rate: float
         def __init__(self) -> None: ...
 
-    # ==================================================================
-    # Functions
-    # ==================================================================
 
-    # ----- Contexts -----
     @staticmethod
     def create_context() -> object: ...
     @staticmethod
@@ -2794,13 +2515,11 @@ class implot:
     @staticmethod
     def set_imgui_context(ctx: object) -> None: ...
 
-    # ----- Begin/End Plot -----
     @staticmethod
     def begin_plot(title_id: str, size: Tuple[float, float] = (-1.0, 0.0), flags: implot.Flags = ...) -> bool: ...
     @staticmethod
     def end_plot() -> None: ...
 
-    # ----- Begin/End Subplots -----
     @staticmethod
     def begin_subplots(
         title_id: str,
@@ -2814,7 +2533,6 @@ class implot:
     @staticmethod
     def end_subplots() -> None: ...
 
-    # ----- Setup -----
     @staticmethod
     def setup_axis(axis: implot.Axis, label: Optional[str] = None, flags: implot.AxisFlags = ...) -> None: ...
     @staticmethod
@@ -2847,7 +2565,6 @@ class implot:
     @staticmethod
     def setup_finish() -> None: ...
 
-    # ----- SetNext -----
     @staticmethod
     def set_next_axis_limits(axis: implot.Axis, v_min: float, v_max: float, cond: implot.Cond = ...) -> None: ...
     @staticmethod
@@ -2857,7 +2574,6 @@ class implot:
     @staticmethod
     def set_next_axes_to_fit() -> None: ...
 
-    # ----- Plot Items -----
     @staticmethod
     def plot_line(label_id: str, values: List[float], xscale: float = 1.0, xstart: float = 0.0, spec: implot.Spec = ...) -> None: ...
     @staticmethod
@@ -3003,7 +2719,6 @@ class implot:
     @staticmethod
     def plot_dummy(label_id: str, spec: implot.Spec = ...) -> None: ...
 
-    # ----- Plot Tools -----
     @staticmethod
     def drag_point(
         id: int,
@@ -3073,7 +2788,6 @@ class implot:
     @staticmethod
     def tag_y_text(y: float, col: Tuple[float, float, float, float], text: str) -> None: ...
 
-    # ----- Plot Utils -----
     @staticmethod
     def set_axis(axis: implot.Axis) -> None: ...
     @staticmethod
@@ -3121,7 +2835,6 @@ class implot:
     @staticmethod
     def end_aligned_plots() -> None: ...
 
-    # ----- Legend Utils -----
     @staticmethod
     def begin_legend_popup(label_id: str, mouse_button: int = 1) -> bool: ...
     @staticmethod
@@ -3129,7 +2842,6 @@ class implot:
     @staticmethod
     def is_legend_entry_hovered(label_id: str) -> bool: ...
 
-    # ----- Drag and Drop -----
     @staticmethod
     def begin_drag_drop_target_plot() -> bool: ...
     @staticmethod
@@ -3148,7 +2860,6 @@ class implot:
     @staticmethod
     def end_drag_drop_source() -> None: ...
 
-    # ----- Styling -----
     @staticmethod
     def get_style() -> implot.Style: ...
 
@@ -3186,7 +2897,6 @@ class implot:
     @staticmethod
     def next_marker() -> implot.Marker: ...
 
-    # ----- Colormaps -----
     @staticmethod
     def add_colormap(name: str, cols: List[Tuple[float, float, float, float]], qual: bool = True) -> implot.Colormap: ...
     @staticmethod
@@ -3241,7 +2951,6 @@ class implot:
     @staticmethod
     def bust_color_cache(plot_title_id: str = "") -> None: ...
 
-    # ----- Input Mapping -----
     @staticmethod
     def get_input_map() -> implot.InputMap: ...
     @staticmethod
@@ -3249,7 +2958,6 @@ class implot:
     @staticmethod
     def map_input_reverse(dst: Optional[implot.InputMap] = None) -> None: ...
 
-    # ----- Miscellaneous -----
     @staticmethod
     def item_icon(col: Tuple[float, float, float, float]) -> None: ...
     @staticmethod
@@ -3277,7 +2985,6 @@ class implot:
     @staticmethod
     def show_metrics_window(p_popen: Optional[bool] = None) -> Optional[bool]: ...
 
-    # ----- Demo -----
     @staticmethod
     def show_demo_window(p_open: Optional[bool] = None) -> Optional[bool]: ...
 
